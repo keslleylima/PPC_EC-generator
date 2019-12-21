@@ -1,0 +1,11 @@
+D:\GitHub\PPC_EC-generator\PpcEc_generator\bin\Debug\netcoreapp3.1\PpcEc_generator.exe
+D:\GitHub\PPC_EC-generator\PpcEc_generator\bin\Debug\netcoreapp3.1\PpcEc_generator.deps.json
+D:\GitHub\PPC_EC-generator\PpcEc_generator\bin\Debug\netcoreapp3.1\PpcEc_generator.runtimeconfig.json
+D:\GitHub\PPC_EC-generator\PpcEc_generator\bin\Debug\netcoreapp3.1\PpcEc_generator.runtimeconfig.dev.json
+D:\GitHub\PPC_EC-generator\PpcEc_generator\bin\Debug\netcoreapp3.1\PpcEc_generator.dll
+D:\GitHub\PPC_EC-generator\PpcEc_generator\bin\Debug\netcoreapp3.1\PpcEc_generator.pdb
+D:\GitHub\PPC_EC-generator\PpcEc_generator\obj\Debug\netcoreapp3.1\PpcEc_generator.csprojAssemblyReference.cache
+D:\GitHub\PPC_EC-generator\PpcEc_generator\obj\Debug\netcoreapp3.1\PpcEc_generator.AssemblyInfoInputs.cache
+D:\GitHub\PPC_EC-generator\PpcEc_generator\obj\Debug\netcoreapp3.1\PpcEc_generator.AssemblyInfo.cs
+D:\GitHub\PPC_EC-generator\PpcEc_generator\obj\Debug\netcoreapp3.1\PpcEc_generator.dll
+D:\GitHub\PPC_EC-generator\PpcEc_generator\obj\Debug\netcoreapp3.1\PpcEc_generator.pdb
