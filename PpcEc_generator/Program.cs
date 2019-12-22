@@ -48,7 +48,7 @@ namespace TestPathConsole
     {
         static void Main()
         {
-            string projectPath = @"D:\GitHub\TestCaseMetricsGenerator\Projects\Math";
+            string projectPath = @"D:\GitHub\PPC_EC-generator\Projects\Cli";
 
 
             CsvGeneratorTestCase(projectPath);
@@ -261,7 +261,7 @@ namespace TestPathConsole
             string reqFileEc = string.Empty;
             string infPathFile = string.Empty;
 
-            string filePath = projectPath + @"\TestCase_metrics_NOVO.csv";
+            string filePath = projectPath + @"\TestCase_metrics.csv";
 
             if (File.Exists(filePath))
                 File.Delete(filePath);
