@@ -1,2 +1,0 @@
-joptsimple.RequiredIfTest.rejectsOptionNotAlreadyConfigured()
-[6,2,3,4,3,5,7]

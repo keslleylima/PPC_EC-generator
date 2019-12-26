@@ -1,2 +1,0 @@
-org.apache.commons.lang3.ObjectUtilsTest.testHashCodeMulti_multiple_nullArray()
-[8,2,3,7,9]

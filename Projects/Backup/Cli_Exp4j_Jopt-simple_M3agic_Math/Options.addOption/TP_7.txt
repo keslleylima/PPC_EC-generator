@@ -1,3 +1,0 @@
-org.apache.commons.cli.OptionsTest.testMissingOptionsException()
-[11,2,3,5,6,8,9,10,12]
-[11,2,3,5,6,8,9,10,12]

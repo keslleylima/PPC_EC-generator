@@ -1,2 +1,0 @@
-joptsimple.util.DateConverterTest.shouldRaiseExceptionThatContainsDatePatternAndValue()
-[7,3,5,8]

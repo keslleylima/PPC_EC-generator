@@ -1,2 +1,0 @@
-com.mpatric.mp3agic.ID3WrapperTest.getComposerReturnsNullIfV2TagDoesNotExist()
-[5,2,4,6]
