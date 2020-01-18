@@ -20,13 +20,11 @@ org.apache.commons.math4.dfp.DfpTest.testIntValue();1;0.6666666666666667
 org.apache.commons.math4.dfp.DfpTest.testIsZero();1;1
 org.apache.commons.math4.ExtendedFieldElementAbstractTest.testLinearCombinationFaFa();0.7777777777777778;0.6666666666666666
 org.apache.commons.math4.ExtendedFieldElementAbstractTest.testMultiplyInt();0.6;0.5
-org.apache.commons.math4.analysis.solvers.FieldBracketingNthOrderBrentSolverTest.testConvergenceOnFunctionAccuracy();0.42857142857142855;0.5
 org.apache.commons.math4.dfp.DfpTest.testNextAfter();0.9166666666666666;0.1111111111111111
 org.apache.commons.math4.dfp.DfpTest.testPower10();0.5;0.25
 org.apache.commons.math4.ExtendedFieldElementAbstractTest.testRemainderField();1;1
 org.apache.commons.math4.ExtendedFieldElementAbstractTest.testSignum();0.6;0.5
 org.apache.commons.math4.dfp.DfpTest.testSignPredicates();1;1
-org.apache.commons.math4.analysis.function.SincTest.testShortcut();0.7377049180327869;0.05769230769230768
 org.apache.commons.math4.analysis.function.SincTest.testDerivativeShortcut();0.7049180327868854;0.05128205128205127
 org.apache.commons.math4.analysis.solvers.FieldBracketingNthOrderBrentSolverTest.testNeta();1;0.9200000000000002
 org.apache.commons.math4.analysis.function.SincTest.testShortcut();0.4166666666666667;0
