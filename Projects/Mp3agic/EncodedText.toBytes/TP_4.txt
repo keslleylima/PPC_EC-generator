@@ -1,0 +1,5 @@
+com.mpatric.mp3agic.EncodedTextTest.shouldStillReturnBytesWhenStringIsEmpty()
+[21,2,3,4,5,22]
+[21,2,3,4,5,22]
+[21,2,3,4,6,7,8,13,16,17,18,19,20,22]
+[21,2,3,4,6,7,8,9,10,13,16,17,18,19,20,22]
