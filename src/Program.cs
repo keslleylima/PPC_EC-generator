@@ -48,7 +48,7 @@ namespace TestPathConsole
     {
         static void Main()
         {
-            string projectPath = @"D:\GitHub\PPC_EC-generator\Projects\Math";
+            string projectPath = @"C:\Users\william\Documents\workspace\vsstudio\PPC_EC-generator\Projects\Math";
 
 
             CsvGeneratorTestCase(projectPath);
