@@ -1,7 +1,7 @@
 using System;
 using Xunit;
 
-namespace PpcEcGeneratorTest
+namespace PpcEcGenerator.Data
 {
     public class UnitTest1
     {

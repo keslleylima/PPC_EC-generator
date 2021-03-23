@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PpcEcGenerator.Data;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -6,44 +7,6 @@ using System.Text;
 
 namespace TestPathConsole
 {
-
-    class Requirement
-    {
-        public string path { set; get; }
-        public List<string> testPaths;
-        public bool covered;
-        public bool feasible;
-
-        public Requirement(string path)
-        {
-            this.path = path;
-            this.covered = false;
-            this.feasible = true;
-            this.testPaths = new List<string>();
-        }
-
-    }
-
-    class Test
-    {
-        public string path { set; get; }
-        public List<string> requirements;
-        public int newReqPpcCovered;
-        public int overallReqPpcCovered;
-        public int newReqEcCovered;
-        public int overallReqEcCovered;
-        public int pathLength;
-        public Test(string path)
-        {
-            this.path = path;
-            this.newReqPpcCovered = 0;
-            this.overallReqPpcCovered = 0;
-            this.newReqEcCovered = 0;
-            this.overallReqEcCovered = 0;
-            this.requirements = new List<string>();
-            this.pathLength = 0;
-        }
-    }
     class Program
     {
         static void Main()
