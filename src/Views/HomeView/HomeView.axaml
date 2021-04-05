@@ -1,0 +1,158 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="700" d:DesignHeight="550"
+             x:Class="PpcEcGenerator.Views.HomeView"
+             Name="pnlHome"
+>
+  <StackPanel>
+    <!-- Header -->
+    <StackPanel Height="80">
+      <Image Height="80" Width="700" Source="/Assets/Images/header-700x80.png" />
+    </StackPanel>
+
+    <ProgressBar  Minimum="0"
+                  Maximum="100"
+                  Value="1"
+                  Name="progressBar"
+    />
+
+    <!-- Body -->
+    <StackPanel Margin="10 10 10 0">
+      <TextBlock  Text="Metrics file selection"
+                  FontSize="40"
+                  HorizontalAlignment="Center"
+      />
+
+      <StackPanel Margin="0 10 0 10">
+        <TextBlock Text="Root path of the project metrics " FontSize="20" Margin="30 0 0 10" />
+        <Grid>
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="100"/>
+          </Grid.ColumnDefinitions>
+          <TextBox  Name="inMetricsRootPath"
+                    Watermark="File path"
+                    Margin="0 0 10 0"
+                    Grid.Column="0"
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Stretch"
+                    IsEnabled="False"
+          />
+          <Button Name="btnChooseMetricsRootPath"
+                  Click="OnChooseMetricsRootPath"
+                  Content="Select file"
+                  Grid.Column="1"
+                  HorizontalContentAlignment="Center"
+                  HorizontalAlignment="Stretch"
+                  VerticalAlignment="Stretch"
+          />
+        </Grid>
+      </StackPanel>
+
+      <StackPanel Margin="0 10 0 10">
+        <TextBlock Text="Test requirement: file prefix" FontSize="20" Margin="30 0 0 10" />
+        <Grid>
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="100"/>
+          </Grid.ColumnDefinitions>
+          <TextBox  Name="inTRFilePrefix"
+                    Watermark="TR_"
+                    Margin="0 0 10 0"
+                    Grid.Column="0"
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Stretch"
+                    Background="#FF151515"
+          />
+          <Button Name="btnClearTRFilePrefix"
+                  Click="OnClearTRFilePrefix"
+                  Content="Clear"
+                  Grid.Column="1"
+                  HorizontalContentAlignment="Center"
+                  HorizontalAlignment="Stretch"
+                  VerticalAlignment="Stretch"
+          />
+        </Grid>
+      </StackPanel>
+
+      <StackPanel Margin="0 10 0 10">
+        <TextBlock Text="Test path: file prefix" FontSize="20" Margin="30 0 0 10" />
+        <Grid>
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="100"/>
+          </Grid.ColumnDefinitions>
+          <TextBox  Name="inTPFilePrefix"
+                    Watermark="TP_"
+                    Margin="0 0 10 0"
+                    Grid.Column="0"
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Stretch"
+                    Background="#FF151515"
+          />
+          <Button Name="btnClearTPFilePrefix"
+                  Click="OnClearTPFilePrefix"
+                  Content="Clear"
+                  Grid.Column="1"
+                  HorizontalContentAlignment="Center"
+                  HorizontalAlignment="Stretch"
+                  VerticalAlignment="Stretch"
+          />
+        </Grid>
+      </StackPanel>
+
+      <StackPanel Margin="0 10 0 10">
+        <TextBlock Text="Infeasible path: file prefix" FontSize="20" Margin="30 0 0 10" />
+        <Grid>
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="100"/>
+          </Grid.ColumnDefinitions>
+          <TextBox  Name="inINFFilePrefix"
+                    Watermark="INF_"
+                    Margin="0 0 10 0"
+                    Grid.Column="0"
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Stretch"
+                    Background="#FF151515"
+          />
+          <Button Name="btnClearINFFilePrefix"
+                  Click="OnClearINFFilePrefix"
+                  Content="Clear"
+                  Grid.Column="1"
+                  HorizontalContentAlignment="Center"
+                  HorizontalAlignment="Stretch"
+                  VerticalAlignment="Stretch"
+          />
+        </Grid>
+      </StackPanel>
+
+      <Grid Margin="0 20 0 0">
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition Width="*"/>
+          <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <Button Click="OnClear"
+                Content="Clear"
+                Margin="0 0 10 0"
+                Grid.Column="0"
+                HorizontalContentAlignment="Center"
+                HorizontalAlignment="Stretch"
+                VerticalAlignment="Stretch"
+        />
+        <Button Name="btnGenerate"
+                Click="OnGenerate"
+                IsEnabled="False"
+                Content="Generate"
+                HorizontalContentAlignment="Center"
+                Margin="10 0 0 0"
+                Grid.Column="1"
+                HorizontalAlignment="Stretch"
+                VerticalAlignment="Stretch"
+        />
+      </Grid>
+    </StackPanel>
+  </StackPanel>
+</UserControl>

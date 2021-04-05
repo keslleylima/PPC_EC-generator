@@ -1,0 +1,2 @@
+com.mpatric.mp3agic.ID3v22TagTest.shouldStoreAndRetrieveCompilation()
+[5,2,3,6]
