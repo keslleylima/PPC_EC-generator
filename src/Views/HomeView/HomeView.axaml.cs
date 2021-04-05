@@ -12,7 +12,8 @@ namespace PpcEcGenerator.Views
         //		Attributes
         //---------------------------------------------------------------------
         private TextBox inMetricsRootPath;
-        private TextBox inTRFilePrefix;
+        private TextBox inTRPPCFilePrefix;
+        private TextBox inTRECFilePrefix;
         private TextBox inTPFilePrefix;
         private TextBox inINFFilePrefix;
         private Button btnGenerate;
@@ -27,7 +28,8 @@ namespace PpcEcGenerator.Views
             InitializeComponent();
             BuildProgressBar();
             BuildChooseMetricsRootPathButton();
-            BuildTRPrefixInput();
+            BuildTRPPCPrefixInput();
+            BuildTRECPrefixInput();
             BuildTPPrefixInput();
             BuildINFPrefixInput();
             BuildGenerateButton();
@@ -52,21 +54,31 @@ namespace PpcEcGenerator.Views
             progressBar.Foreground = ColorBrushFactory.ThemeAccent();
         }
 
-        private void BuildTRPrefixInput()
+        private void BuildTRPPCPrefixInput()
         {
-            inTRFilePrefix = this.FindControl<TextBox>("inTRFilePrefix");
-            inTRFilePrefix.SelectionBrush = ColorBrushFactory.ThemeAccent();
-            inTRFilePrefix.CaretBrush = ColorBrushFactory.ThemeAccent();
-            inTRFilePrefix.KeyUp += (o, e) => { CheckIfGenerationIsAvailable(); };
+            inTRPPCFilePrefix = this.FindControl<TextBox>("inTRPPCFilePrefix");
+            inTRPPCFilePrefix.SelectionBrush = ColorBrushFactory.ThemeAccent();
+            inTRPPCFilePrefix.CaretBrush = ColorBrushFactory.ThemeAccent();
+            inTRPPCFilePrefix.KeyUp += (o, e) => { CheckIfGenerationIsAvailable(); };
 
-            BuildClearTRPrefixButton("btnClearTRFilePrefix");
+            BuildClearPrefixButton("btnClearTRPPCFilePrefix");
         }
 
-        private void BuildClearTRPrefixButton(string id)
+        private void BuildClearPrefixButton(string id)
         {
             Button btnClear = this.FindControl<Button>(id);
 
             btnClear.Background = ColorBrushFactory.ThemeAccent();
+        }
+
+        private void BuildTRECPrefixInput()
+        {
+            inTRECFilePrefix = this.FindControl<TextBox>("inTRECFilePrefix");
+            inTRECFilePrefix.SelectionBrush = ColorBrushFactory.ThemeAccent();
+            inTRECFilePrefix.CaretBrush = ColorBrushFactory.ThemeAccent();
+            inTRECFilePrefix.KeyUp += (o, e) => { CheckIfGenerationIsAvailable(); };
+
+            BuildClearPrefixButton("btnClearTRECFilePrefix");
         }
 
         private void BuildTPPrefixInput()
@@ -76,7 +88,7 @@ namespace PpcEcGenerator.Views
             inTPFilePrefix.CaretBrush = ColorBrushFactory.ThemeAccent();
             inTPFilePrefix.KeyUp += (o, e) => { CheckIfGenerationIsAvailable(); };
 
-            BuildClearTRPrefixButton("btnClearTPFilePrefix");
+            BuildClearPrefixButton("btnClearTPFilePrefix");
         }
 
         private void BuildINFPrefixInput()
@@ -86,7 +98,7 @@ namespace PpcEcGenerator.Views
             inINFFilePrefix.CaretBrush = ColorBrushFactory.ThemeAccent();
             inINFFilePrefix.KeyUp += (o, e) => { CheckIfGenerationIsAvailable(); };
 
-            BuildClearTRPrefixButton("btnClearINFFilePrefix");
+            BuildClearPrefixButton("btnClearINFFilePrefix");
         }
 
         private void BuildChooseMetricsRootPathButton()
@@ -143,9 +155,16 @@ namespace PpcEcGenerator.Views
             CheckIfGenerationIsAvailable();
         }
 
-        private void OnClearTRFilePrefix(object sender, RoutedEventArgs e)
+        private void OnClearTRPPCFilePrefix(object sender, RoutedEventArgs e)
         {
-            inTRFilePrefix.Text = "";
+            inTRPPCFilePrefix.Text = "";
+
+            CheckIfGenerationIsAvailable();
+        }
+
+        private void OnClearTRECFilePrefix(object sender, RoutedEventArgs e)
+        {
+            inTRECFilePrefix.Text = "";
 
             CheckIfGenerationIsAvailable();
         }
@@ -167,7 +186,8 @@ namespace PpcEcGenerator.Views
         private void OnClear(object sender, RoutedEventArgs e)
         {
             inMetricsRootPath.Text = "";
-            inTRFilePrefix.Text = "";
+            inTRPPCFilePrefix.Text = "";
+            inTRECFilePrefix.Text = "";
             inTPFilePrefix.Text = "";
             inINFFilePrefix.Text = "";
             btnGenerate.IsEnabled = false;
@@ -177,7 +197,8 @@ namespace PpcEcGenerator.Views
         {
             homeController.OnGenerate(
                 inMetricsRootPath.Text, 
-                inTRFilePrefix.Text, 
+                inTRPPCFilePrefix.Text,
+                inTRECFilePrefix.Text,
                 inTPFilePrefix.Text, 
                 inINFFilePrefix.Text
             );

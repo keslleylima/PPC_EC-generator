@@ -29,7 +29,6 @@ namespace TestPathConsole
 
             List<string> listInfeasiblePaths = new List<string>();
             String[] fileInfeasiblePaths;
-            string[] listMethodPaths = GetDirectories(projectPath);
             string[] listFiles;
             List<string> testPathsFiles;
             string reqFilePpc = string.Empty;
@@ -42,11 +41,12 @@ namespace TestPathConsole
             if (File.Exists(filePath))
                 File.Delete(filePath);
 
+            string[] listMethodPaths = Directory.GetDirectories(projectPath);
             foreach (string methodPath in listMethodPaths)
             {
                 listTestPath = new List<Test>();
                 testPathsFiles = new List<string>();
-                listFiles = GetFiles(methodPath);
+                listFiles = GetTextFilesFromDirectory(methodPath);
                 foreach (string file in listFiles)
                 {
                     if (file.Contains("TR_PPC"))
@@ -259,14 +259,7 @@ namespace TestPathConsole
             File.AppendAllText(filePath, sb.ToString());
         }
 
-        public static string[] GetDirectories(string projectPath)
-        {
-            string[] directories = Directory.GetDirectories(projectPath);
-
-            return directories;
-
-        }
-        public static string[] GetFiles(string directoryPath)
+        public static string[] GetTextFilesFromDirectory(string directoryPath)
         {
             string[] files = Directory.GetFiles(directoryPath, "*.txt", SearchOption.AllDirectories);
 

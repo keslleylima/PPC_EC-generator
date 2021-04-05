@@ -38,8 +38,9 @@ namespace PpcEcGenerator.Controllers
                     : "";
         }
 
-        public void OnGenerate(string metricsRootPath, string trFilePrefix,
-                               string tpFilePrefix, string infFilePrefix)
+        public void OnGenerate(string metricsRootPath, string trPpcFilePrefix,
+                               string trEcFilePrefix, string tpFilePrefix, 
+                               string infFilePrefix)
         {
             window.NavigateToEndView("output");
         }

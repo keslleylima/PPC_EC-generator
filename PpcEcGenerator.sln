@@ -5,7 +5,7 @@ VisualStudioVersion = 16.0.29519.181
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PpcEcGeneratorTest", "test\PpcEcGeneratorTest.csproj", "{BAC8422D-7DEC-42DD-8734-4F9F3BD839FE}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PpcEcGenerator", "PpcEcGenerator\PpcEcGenerator.csproj", "{AEB75CAD-2121-4FE8-BFA8-DFEF40E2B828}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PpcEcGenerator", "src\PpcEcGenerator.csproj", "{AEB75CAD-2121-4FE8-BFA8-DFEF40E2B828}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
