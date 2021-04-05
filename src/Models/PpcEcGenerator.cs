@@ -1,4 +1,7 @@
-﻿using PpcEcGenerator.Data;
+﻿using PccEcGenerator.Data;
+using PpcEcGenerator.Data;
+using PpcEcGenerator.Export;
+using PpcEcGenerator.IO;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -9,134 +12,130 @@ namespace TestPathConsole
 {
     class PpcEcGenerator
     {
-        static void Run()
+        /// <summary>
+        ///     Key:    idTestPathFile
+        ///     Value:  Coverage data
+        /// </summary>
+        Dictionary<string, List<Coverage>> coverageData;
+
+
+        public void Run()
         {
             string projectPath = @"C:\Users\william\Documents\workspace\vsstudio\PPC_EC-generator\Projects\Math";
-
-
-            CsvGeneratorTestCase(projectPath);
+            string ppcPrefix = "PPC_";
+            string ecPrefix = "EC_";
+            string tpPrefix = "TP_";
+            string infPrefix = "INF_";
+            CsvGeneratorTestCase(projectPath, ppcPrefix, ecPrefix, tpPrefix, infPrefix);
         }
 
-        public static void CsvGeneratorTestCase(string projectPath)
+
+
+        // ppc ec gen
+        public string CsvGeneratorTestCase(string projectPath, string ppcPrefix, string ecPrefix, string tpPrefix, string infPrefix)
         {
-            List<Requirement> listReqPpc;
-            string[] fileReqPpc;
-            List<Requirement> listReqEc;
-            string[] fileReqEc;
-
-            List<Test> listTestPath;
-            String[] fileTestPath;
-
-            List<string> listInfeasiblePaths = new List<string>();
-            String[] fileInfeasiblePaths;
-            string[] listFiles;
-            List<string> testPathsFiles;
-            string reqFilePpc = string.Empty;
-            string reqFileEc = string.Empty;
-            string infPathFile = string.Empty;
-
             string filePath = projectPath + @"\TestCase_metrics.csv";
-            Console.WriteLine("PATH: " + filePath);
+            Console.WriteLine("OUTPUT PATH: " + filePath);
 
             if (File.Exists(filePath))
                 File.Delete(filePath);
 
-            string[] listMethodPaths = Directory.GetDirectories(projectPath);
-            foreach (string methodPath in listMethodPaths)
+            List<string> listInfeasiblePaths = new List<string>();
+            CoverageFileFinder finder = new CoverageFileFinder(ppcPrefix, ecPrefix, tpPrefix, infPrefix);
+
+            foreach (string methodPath in Directory.GetDirectories(projectPath))
             {
-                listTestPath = new List<Test>();
-                testPathsFiles = new List<string>();
-                listFiles = GetTextFilesFromDirectory(methodPath);
-                foreach (string file in listFiles)
-                {
-                    if (file.Contains("TR_PPC"))
-                    {
-                        reqFilePpc = file;
-                    }
-                    else if (file.Contains("TR_EC"))
-                    {
-                        reqFileEc = file;
-                    }
-                    else if (file.Contains("TP"))
-                    {
-                        testPathsFiles.Add(file);
-                    }
-                    else if (file.Contains("INF"))
-                    {
-                        infPathFile = file;
-                    }
-                }
-
-                string idTestPathFile;
-
-                foreach (string testPathFile in testPathsFiles)
-                {
-                    listReqPpc = new List<Requirement>();
-                    fileReqPpc = OpenFile(reqFilePpc);
-                    CreatListReq(fileReqPpc, listReqPpc);
-
-                    listReqEc = new List<Requirement>();
-                    fileReqEc = OpenFile(reqFileEc);
-                    CreatListReq(fileReqEc, listReqEc);
-
-                    if (!string.IsNullOrEmpty(infPathFile))
-                    {
-                        fileInfeasiblePaths = OpenFile(infPathFile);
-                        CreateListInfeasiblePaths(fileInfeasiblePaths, listInfeasiblePaths);
-                        CheckInfeasibleReq(listInfeasiblePaths, listReqPpc);
-                        CheckInfeasibleReq(listInfeasiblePaths, listReqEc);
-                    }
-
-                    fileTestPath = OpenFile(testPathFile);
-
-                    idTestPathFile = fileTestPath.First();
-
-                    CreateListTestPaths(fileTestPath, listTestPath);
-                    CalculatePathLength(listTestPath);
-                    SortListByPathLength(listTestPath);
-                    CountReqPpcCovered(listReqPpc, listTestPath);
-                    CountReqNcCovered(listReqEc, listTestPath);
-                    CreateTestCaseMetrics(filePath, listTestPath, idTestPathFile, listReqPpc, listReqEc);
-
-                    listTestPath.Clear();
-                }
+                finder.FindMetricsFilesAt(methodPath);
+                ParseMetrics(finder, filePath, listInfeasiblePaths);
             }
+
+            return filePath;
         }
 
-        private static string[] OpenFile(string path)
-        {
-            string[] lines;
-            try
-            {
-                lines = System.IO.File.ReadAllLines(path);
-            }
-            catch (FileNotFoundException execption)
-            {
-                throw execption;
-            }
-            return lines;
-        }
-        public static List<string> hasLoop(string path)
-        {
-            List<string> listPath = new List<string>();
 
-            string[] test = path.Split(',');
-            for (int i = 0; i < test.Length; i++)
+
+
+
+
+        // PARSER
+        private void ParseMetrics(CoverageFileFinder finder, string filePath, List<string> listInfeasiblePaths)
+        {
+            List<Test> listTestPath = new List<Test>();
+
+            foreach (string testPathFile in finder.TestPathsFiles)
             {
-                for (int j = i + 1; j < test.Length; j++)
+                List<Requirement> listReqPpc = CreatePPCList(finder.ReqFilePpc);
+                List<Requirement> listReqEc = CreateECList(finder.ReqFileEc);
+                ParseInfeasiblePaths(finder.InfPathFile, listInfeasiblePaths, listReqPpc, listReqEc);
+
+                String[] fileTestPath = File.ReadAllLines(testPathFile);
+                CreateListTestPaths(fileTestPath, listTestPath);
+
+                foreach (Test testPath in listTestPath)
                 {
-                    if (test[i] == test[j] && !(i == (test.Length - test.Length) && j == test.Length - 1))
-                    {
-                        listPath.Add(path[i..j]);
-                        i = j;
-                        continue;
-                    }
+                    testPath.pathLength = CalculatePathLength(testPath);
+                }
+
+                SortListByPathLength(listTestPath);
+                CountReqPpcCovered(listReqPpc, listTestPath);
+                CountReqNcCovered(listReqEc, listTestPath);
+
+                Coverage coverage = new Coverage();
+                coverage.Calculate(listTestPath, listReqPpc, listReqEc);
+
+                if (coverageData.ContainsKey(fileTestPath.First()))
+                {
+                    coverageData.TryGetValue(fileTestPath.First(), out List<Coverage> coverageList);
+                    coverageList.Add(coverage);
+                }
+                else
+                {
+                    List<Coverage> coverageList = new List<Coverage>();
+                    coverageList.Add(coverage);
+                    coverageData.Add(fileTestPath.First(), coverageList);
                 }
             }
-            return listPath;
+
+
+            CoverageCSVExporter exporter = new CoverageCSVExporter(filePath, coverageData);
+            exporter.Export();
         }
-        public static void CreatListReq(string[] fileReq, List<Requirement> listReq)
+
+        private List<Requirement> CreatePPCList(string reqFilePpc)
         {
+            string[] fileReqPpc = File.ReadAllLines(reqFilePpc);
+            List<Requirement> listReqPpc = CreatListReq(fileReqPpc);
+            return listReqPpc;
+        }
+
+        private List<Requirement> CreateECList(string reqFileEc)
+        {
+            string[] fileReqEc = File.ReadAllLines(reqFileEc);
+            List<Requirement> listReqEc = CreatListReq(fileReqEc);
+            return listReqEc;
+        }
+
+        private void ParseInfeasiblePaths(string infPathFile, List<string> listInfeasiblePaths, List<Requirement> listReqPpc, List<Requirement> listReqEc)
+        {
+            if (string.IsNullOrEmpty(infPathFile))
+                return;
+            
+            string[] fileInfeasiblePaths = File.ReadAllLines(infPathFile);
+
+            CreateListInfeasiblePaths(fileInfeasiblePaths, listInfeasiblePaths);
+            CheckInfeasibleReq(listInfeasiblePaths, listReqPpc);
+            CheckInfeasibleReq(listInfeasiblePaths, listReqEc);
+        }
+
+        public static int CalculatePathLength(Test testPath)
+        {
+            return testPath.path.Split(',').Length;
+        }
+
+        public static List<Requirement> CreatListReq(string[] fileReq)
+        {
+            List<Requirement> listReq = new List<Requirement>();
+
             foreach (string req in fileReq)
             {
                 // StartPoint is used to remove all char before the "["
@@ -145,7 +144,10 @@ namespace TestPathConsole
                 Requirement requirement = new Requirement(trProcessed.Trim(new Char[] { ' ', '[', ']', '\n' }));
                 listReq.Add(requirement);
             }
+
+            return listReq;
         }
+
         public static void CreateListTestPaths(string[] fileTestPath, List<Test> listTestPath)
         {
             // removing repeted test paths.
@@ -158,6 +160,7 @@ namespace TestPathConsole
                 listTestPath.Add(test);
             }
         }
+
         public static void CreateListInfeasiblePaths(string[] fileInfeasiblePaths, List<string> listInfeasiblePaths)
         {
             foreach (string item in fileInfeasiblePaths)
@@ -166,6 +169,7 @@ namespace TestPathConsole
                 listInfeasiblePaths.Add(tmp);
             }
         }
+
         public static void CheckInfeasibleReq(List<string> listInfeasiblePaths, List<Requirement> listReq)
         {
             foreach (string infeasiblePath in listInfeasiblePaths)
@@ -179,6 +183,7 @@ namespace TestPathConsole
                 }
             }
         }
+
         public static void CountReqPpcCovered(List<Requirement> listReqPpc, List<Test> listTestPath)
         {
             foreach (Requirement requirement in listReqPpc)
@@ -199,6 +204,7 @@ namespace TestPathConsole
                 }
             }
         }
+
         public static void CountReqNcCovered(List<Requirement> listReqNc, List<Test> listTestPath)
         {
             foreach (Requirement requirement in listReqNc)
@@ -219,6 +225,7 @@ namespace TestPathConsole
                 }
             }
         }
+
         public static void SortListByPathLength(List<Test> listTestPath)
         {
             for (int i = 1; i < listTestPath.Count; i++)
@@ -232,56 +239,6 @@ namespace TestPathConsole
                         listTestPath[j] = test;
                     }
                 }
-            }
-        }
-        public static void CreateTestCaseMetrics(string filePath, List<Test> listTestPath, string idTestPathFile, List<Requirement> listReqPpc, List<Requirement> listReqEc)
-        {
-            string delimiter = ";";
-            StringBuilder sb = new StringBuilder();
-
-            double sumEdgeCoverage = 0;
-            double sumPrimePath = 0;
-
-            if (!File.Exists(filePath))
-                sb.Append("Id;EdgeCoverage;PrimePathCoverage\n");
-
-            foreach (Test test in listTestPath)
-            {
-                List<string> listLoop = hasLoop(test.path);
-
-                sumEdgeCoverage += ((double)test.newReqEcCovered / (double)listReqEc.Count);
-
-                sumPrimePath += ((double)test.newReqPpcCovered / (double)listReqPpc.Count);
-            }
-
-            sb.Append(idTestPathFile + delimiter + sumEdgeCoverage + delimiter + sumPrimePath + "\n");
-
-            File.AppendAllText(filePath, sb.ToString());
-        }
-
-        public static string[] GetTextFilesFromDirectory(string directoryPath)
-        {
-            string[] files = Directory.GetFiles(directoryPath, "*.txt", SearchOption.AllDirectories);
-
-            return files;
-        }
-        public static void CalculatePathLength(List<Test> listTestPath)
-        {
-            foreach (Test testPath in listTestPath)
-            {
-                testPath.pathLength = testPath.path.Split(',').Length;
-            }
-        }
-        public static void ShowReqCoveredByEachTestPath(List<Test> listTestPath)
-        {
-            foreach (Test testPath in listTestPath)
-            {
-                Console.WriteLine(testPath.path);
-                foreach (string reqCovered in testPath.requirements)
-                {
-                    Console.WriteLine(reqCovered);
-                }
-                Console.WriteLine("\n");
             }
         }
     }
