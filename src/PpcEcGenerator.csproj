@@ -22,7 +22,6 @@
     <PackageReference Include="Avalonia.Diagnostics" Version="0.10.0" />
    </ItemGroup>
   <ItemGroup>
-    <Folder Include="Models\PpcEcGenerator.Export\" />
     <Folder Include="Models\PpcEcGenerator.Style.Color\" />
   </ItemGroup>
 </Project>
