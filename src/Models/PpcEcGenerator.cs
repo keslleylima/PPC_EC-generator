@@ -8,12 +8,28 @@ using System.IO;
 
 namespace PpcEcGenerator
 {
+    /// <summary>
+    ///     Generates code coverage using the following metrics:
+    ///     
+    ///     <list type="bullet">
+    ///         <item>Prime path coverage</item>
+    ///         <item>Edge coverage</item>
+    ///     </list>
+    /// </summary>
     public class PpcEcGenerator
     {
+        //---------------------------------------------------------------------
+        //		Attributes
+        //---------------------------------------------------------------------
         private readonly string projectPath;
         private readonly string outputPath;
         private readonly CoverageFileFinder finder;
+        private IDictionary<string, List<Coverage>> coverageData;
 
+
+        //---------------------------------------------------------------------
+        //		Constructor
+        //---------------------------------------------------------------------
         private PpcEcGenerator(string projectPath, string outputPath, CoverageFileFinder finder)
         {
             this.projectPath = projectPath;
@@ -22,6 +38,9 @@ namespace PpcEcGenerator
         }
 
 
+        //---------------------------------------------------------------------
+        //		Builder
+        //---------------------------------------------------------------------
         public class Builder
         {
             private string projectPath;
@@ -109,17 +128,33 @@ namespace PpcEcGenerator
             }
         }
 
+
+        //---------------------------------------------------------------------
+        //		Methods
+        //---------------------------------------------------------------------
         public string GenerateCoverage()
         {
             if (File.Exists(outputPath))
                 File.Delete(outputPath);
 
-            MetricsParser parser = new MetricsParser(projectPath);
-            Dictionary<string, List<Coverage>> coverageData = parser.ParseMetrics(finder);
-
-            CoverageCSVExporter exporter = new CoverageCSVExporter(outputPath, coverageData);
-            exporter.Export();
+            DoParsing();
+            ExportResults();
+            
             return outputPath;
+        }
+
+        private void DoParsing()
+        {
+            MetricsParser parser = new MetricsParser(projectPath);
+
+            coverageData = parser.ParseMetrics(finder);
+        }
+
+        private void ExportResults()
+        {
+            CoverageCSVExporter exporter = new CoverageCSVExporter(outputPath, coverageData);
+            
+            exporter.Export();
         }
     }
 }

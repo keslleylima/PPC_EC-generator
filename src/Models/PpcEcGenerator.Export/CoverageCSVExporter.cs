@@ -12,10 +12,10 @@ namespace PpcEcGenerator.Export
     {
         private static readonly string DELIMITER = ";";
         private string output;
-        private Dictionary<string, List<Coverage>> coverage;
+        private IDictionary<string, List<Coverage>> coverage;
 
 
-        public CoverageCSVExporter(string output, Dictionary<string, List<Coverage>> coverage)
+        public CoverageCSVExporter(string output, IDictionary<string, List<Coverage>> coverage)
         {
             this.output = output;
             this.coverage = coverage;
