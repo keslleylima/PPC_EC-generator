@@ -11,6 +11,8 @@ namespace PpcEcGenerator.Data
         public int newReqEcCovered;
         public int overallReqEcCovered;
         public int pathLength;
+
+
         public Test(string path)
         {
             this.path = path;
