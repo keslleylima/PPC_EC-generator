@@ -1,29 +1,34 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace PpcEcGenerator.Data
 {
+    /// <summary>
+    ///     Represents prime path coverage metric.
+    /// </summary>
     public class PPC : Metric
     {
+        //---------------------------------------------------------------------
+        //		Constructor
+        //---------------------------------------------------------------------
         public PPC(string filePath) : base(filePath)
         {
         }
 
+
+        //---------------------------------------------------------------------
+        //		Methods
+        //---------------------------------------------------------------------
         protected override void ParseTestPath(Requirement requirement, Test test)
         {
             if (requirement.covered == false)
             {
-                test.newReqEcCovered = test.newReqEcCovered + 1;
+                test.IncreaseNewPpcCovered();
                 requirement.covered = true;
             }
 
-            test.overallReqEcCovered = test.overallReqEcCovered + 1;
-            test.requirements.Add(requirement.path);
-            requirement.testPaths.Add(test.path);
+            test.IncreasePpcCovered();
+            test.AddRequirement(requirement.path);
+            requirement.testPaths.Add(test.Path);
         }
 
         public double CalculateCoverage(List<Test> listTestPath)
@@ -32,7 +37,7 @@ namespace PpcEcGenerator.Data
 
             foreach (Test test in listTestPath)
             {
-                coverage += ((double) test.newReqPpcCovered) / GetTotalRequirements();
+                coverage += ((double) test.NewPpcCovered) / GetTotalRequirements();
             }
 
             return coverage;

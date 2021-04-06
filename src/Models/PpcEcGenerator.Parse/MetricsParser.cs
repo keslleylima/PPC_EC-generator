@@ -7,6 +7,9 @@ using System.Linq;
 
 namespace PpcEcGenerator.Parse
 {
+    /// <summary>
+    ///     Responsible for parsing metrics files.
+    /// </summary>
     public class MetricsParser
     {
         //---------------------------------------------------------------------
@@ -16,11 +19,11 @@ namespace PpcEcGenerator.Parse
         ///     Key:    idTestPathFile
         ///     Value:  Coverage data
         /// </summary>
-        Dictionary<string, List<Coverage>> coverageData;
+        private readonly Dictionary<string, List<Coverage>> coverageData;
 
-        List<Test> listTestPath = new List<Test>();
-        List<string> listInfeasiblePaths;
-        string projectPath;
+        private readonly List<Test> listTestPath = new List<Test>();
+        private List<string> listInfeasiblePaths;
+        private readonly string projectPath;
 
 
         //---------------------------------------------------------------------
@@ -50,7 +53,6 @@ namespace PpcEcGenerator.Parse
             }
 
             return coverageData;
-            
         }
 
         private void ParseTestPathFiles(CoverageFileFinder finder)
@@ -58,26 +60,28 @@ namespace PpcEcGenerator.Parse
             foreach (string testPathFile in finder.TestPathFiles)
             {
                 string[] testPathLines = File.ReadAllLines(testPathFile);
-
                 PPC ppc = new PPC(finder.PrimePathCoverageFile);
                 EC ec = new EC(finder.EdgeCoverageFile);
 
-                ParseInfeasiblePaths(finder.InfeasiblePathFile, listInfeasiblePaths, ppc, ec);
+                ParseInfeasiblePaths(finder.InfeasiblePathFile, ppc, ec);
                 ParseTestPathLines(testPathLines);
-                CalculateTestPathLength();
+                SortListByPathLength(listTestPath);
                 CalculateCoverage(ppc, ec);
                 StoreCoverage(ppc, ec, testPathLines.First());
             }
         }
 
-        private void CalculateTestPathLength()
+        private void ParseTestPathLines(string[] fileTestPath)
         {
-            foreach (Test testPath in listTestPath)
+            foreach (string line in fileTestPath.Distinct().ToArray().Skip(1))
             {
-                testPath.pathLength = CalculatePathLength(testPath);
+                listTestPath.Add(new Test(ExtractCodePathFrom(line)));
             }
+        }
 
-            SortListByPathLength(listTestPath);
+        private string ExtractCodePathFrom(string line)
+        {
+            return line.Trim(new Char[] { ' ', '[', ']', '\n' });
         }
 
         private void CalculateCoverage(PPC ppc, EC ec)
@@ -89,9 +93,9 @@ namespace PpcEcGenerator.Parse
         private void StoreCoverage(PPC ppc, EC ec, string methodId)
         {
             Coverage coverage = new Coverage(
-                                ppc.CalculateCoverage(listTestPath),
-                                ec.CalculateCoverage(listTestPath)
-                            );
+                ppc.CalculateCoverage(listTestPath),
+                ec.CalculateCoverage(listTestPath)
+            );
 
             if (coverageData.ContainsKey(methodId))
             {
@@ -115,54 +119,27 @@ namespace PpcEcGenerator.Parse
                     || (finder.EdgeCoverageFile == string.Empty);
         }
 
-        private void ParseInfeasiblePaths(string infPathFile, List<string> listInfeasiblePaths, PPC ppc, EC ec)
+        private void ParseInfeasiblePaths(string infPathFile, PPC ppc, EC ec)
         {
             if (string.IsNullOrEmpty(infPathFile))
                 return;
 
-            string[] fileInfeasiblePaths = File.ReadAllLines(infPathFile);
+            foreach (string line in File.ReadAllLines(infPathFile))
+            {
+                listInfeasiblePaths.Add(ExtractCodePathFrom(line));
+            }
 
-            CreateListInfeasiblePaths(fileInfeasiblePaths, listInfeasiblePaths);
             ppc.ParseInfeasiblePath(listInfeasiblePaths);
             ec.ParseInfeasiblePath(listInfeasiblePaths);
         }
 
-        public static int CalculatePathLength(Test testPath)
-        {
-            return testPath.path.Split(',').Length;
-        }
-
-        
-
-        public void ParseTestPathLines(string[] fileTestPath)
-        {
-            // removing repeted test paths.
-            String[] fileTestPathProcessed = fileTestPath.Distinct().ToArray();
-            foreach (string item in fileTestPathProcessed.Skip(1))
-            {
-                string tmp = item.Trim(new Char[] { ' ', '[', ']', '\n' });
-                Test test = new Test(tmp);
-
-                listTestPath.Add(test);
-            }
-        }
-
-        public static void CreateListInfeasiblePaths(string[] fileInfeasiblePaths, List<string> listInfeasiblePaths)
-        {
-            foreach (string item in fileInfeasiblePaths)
-            {
-                string tmp = item.Trim(new Char[] { ' ', '[', ']', '\n' });
-                listInfeasiblePaths.Add(tmp);
-            }
-        }
-
-        public static void SortListByPathLength(List<Test> listTestPath)
+        private static void SortListByPathLength(List<Test> listTestPath)
         {
             for (int i = 1; i < listTestPath.Count; i++)
             {
                 for (int j = 0; j < i; j++)
                 {
-                    if (listTestPath[i].pathLength > listTestPath[j].pathLength)
+                    if (listTestPath[i].PathLength > listTestPath[j].PathLength)
                     {
                         Test test = listTestPath[i];
                         listTestPath[i] = listTestPath[j];

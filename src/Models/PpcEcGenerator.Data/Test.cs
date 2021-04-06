@@ -2,26 +2,74 @@
 
 namespace PpcEcGenerator.Data
 {
+    /// <summary>
+    ///     Manages metrics information for a test.
+    /// </summary>
     public class Test
     {
-        public string path { set; get; }
-        public List<string> requirements;
-        public int newReqPpcCovered;
-        public int overallReqPpcCovered;
-        public int newReqEcCovered;
-        public int overallReqEcCovered;
-        public int pathLength;
+        //---------------------------------------------------------------------
+        //		Attributes
+        //---------------------------------------------------------------------
+        private readonly List<string> requirements;
 
 
+        //---------------------------------------------------------------------
+        //		Constructor
+        //---------------------------------------------------------------------
         public Test(string path)
         {
-            this.path = path;
-            this.newReqPpcCovered = 0;
-            this.overallReqPpcCovered = 0;
-            this.newReqEcCovered = 0;
-            this.overallReqEcCovered = 0;
-            this.requirements = new List<string>();
-            this.pathLength = 0;
+            Path = path;
+            OverallPpcCovered = 0;
+            OverallEcCovered = 0;
+            NewPpcCovered = 0;
+            NewEcCovered = 0;
+            requirements = new List<string>();
+            PathLength = CalculatePathLength(path);
+        }
+
+
+        //---------------------------------------------------------------------
+        //		Properties
+        //---------------------------------------------------------------------
+        public string Path { get; private set; }
+        public int PathLength { get; private set; }
+        public int NewPpcCovered { get; private set; }
+        public int NewEcCovered { get; private set; }
+        public int OverallPpcCovered { get; private set; }
+        public int OverallEcCovered { get; private set; }
+
+
+        //---------------------------------------------------------------------
+        //		Methods
+        //---------------------------------------------------------------------
+        private static int CalculatePathLength(string path)
+        {
+            return path.Split(',').Length;
+        }
+
+        public void AddRequirement(string requirement)
+        {
+            requirements.Add(requirement);
+        }
+
+        public void IncreaseNewPpcCovered()
+        {
+            NewPpcCovered++;
+        }
+
+        public void IncreaseNewEcCovered()
+        {
+            NewEcCovered++;
+        }
+
+        public void IncreasePpcCovered()
+        {
+            OverallPpcCovered++;
+        }
+
+        public void IncreaseEcCovered()
+        {
+            OverallEcCovered++;
         }
     }
 }

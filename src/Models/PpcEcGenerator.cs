@@ -82,6 +82,13 @@ namespace PpcEcGenerator
                 return this;
             }
 
+            public Builder TestPathPrefix(string prefix)
+            {
+                tpPrefix = prefix;
+
+                return this;
+            }
+
             public Builder InfeasiblePathPrefix(string prefix)
             {
                 infPrefix = prefix;
@@ -96,6 +103,7 @@ namespace PpcEcGenerator
                 CoverageFileFinder finder = new CoverageFileFinder.Builder()
                     .PrimePathCoveragePrefix(ppcPrefix)
                     .EdgeCoveragePrefix(ecPrefix)
+                    .TestPathPrefix(tpPrefix)
                     .InfeasiblePathPrefix(infPrefix)
                     .Build();
 
@@ -117,8 +125,8 @@ namespace PpcEcGenerator
                 if (IsEmpty(ecPrefix))
                     throw new ArgumentException("Edge coverage prefix cannot be empty");
 
-                if (IsEmpty(infPrefix))
-                    throw new ArgumentException("Infeasible path prefix cannot be empty");
+                if (IsEmpty(tpPrefix))
+                    throw new ArgumentException("Test path prefix cannot be empty");
             }
 
             private bool IsEmpty(string str)

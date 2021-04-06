@@ -3,15 +3,29 @@ using System.IO;
 
 namespace PpcEcGenerator.Data
 {
+    /// <summary>
+    ///     Represents a code metric.
+    /// </summary>
     public abstract class Metric
     {
+        //---------------------------------------------------------------------
+        //		Methods
+        //---------------------------------------------------------------------
         private List<Requirement> requirements;
 
+
+        //---------------------------------------------------------------------
+        //		Constructor
+        //---------------------------------------------------------------------
         protected Metric(string filePath)
         {
             CreateRequirementsFrom(File.ReadAllLines(filePath));
         }
 
+
+        //---------------------------------------------------------------------
+        //		Methods
+        //---------------------------------------------------------------------
         private void CreateRequirementsFrom(string[] fileReq)
         {
             requirements = new List<Requirement>();
@@ -39,7 +53,7 @@ namespace PpcEcGenerator.Data
             {
                 foreach (Test test in listTestPath)
                 {
-                    if (!test.path.Contains(requirement.path) || requirement.feasible == false)
+                    if (!test.Path.Contains(requirement.path) || requirement.feasible == false)
                         continue;
 
                     ParseTestPath(requirement, test);

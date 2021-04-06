@@ -1,20 +1,23 @@
 ﻿using PpcEcGenerator.Data;
-using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace PpcEcGenerator.Export
 {
     public class CoverageCSVExporter : IExporter
     {
+        //---------------------------------------------------------------------
+        //		Attributes
+        //---------------------------------------------------------------------
         private static readonly string DELIMITER = ";";
-        private string output;
-        private IDictionary<string, List<Coverage>> coverage;
+        private readonly string output;
+        private readonly IDictionary<string, List<Coverage>> coverage;
 
 
+        //---------------------------------------------------------------------
+        //		Constructor
+        //---------------------------------------------------------------------
         public CoverageCSVExporter(string output, IDictionary<string, List<Coverage>> coverage)
         {
             this.output = output;
@@ -22,6 +25,9 @@ namespace PpcEcGenerator.Export
         }
 
 
+        //---------------------------------------------------------------------
+        //		Methods
+        //---------------------------------------------------------------------
         public void Export()
         {
             StringBuilder sb = new StringBuilder();
