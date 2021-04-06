@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace PpcEcGenerator.Data
 {
@@ -33,6 +34,9 @@ namespace PpcEcGenerator.Data
 
         public double CalculateCoverage(List<Test> listTestPath)
         {
+            if (listTestPath == null)
+                throw new ArgumentException("Test path list cannot be null");
+
             double coverage = 0.0;
 
             foreach (Test test in listTestPath)

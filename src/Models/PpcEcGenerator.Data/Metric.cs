@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 
 namespace PpcEcGenerator.Data
@@ -19,6 +20,9 @@ namespace PpcEcGenerator.Data
         //---------------------------------------------------------------------
         protected Metric(string filePath)
         {
+            if (string.IsNullOrEmpty(filePath))
+                throw new ArgumentException("File metrics cannot be empty");
+
             CreateRequirementsFrom(File.ReadAllLines(filePath));
         }
 
@@ -49,6 +53,9 @@ namespace PpcEcGenerator.Data
 
         public void CountReqCovered(List<Test> listTestPath)
         {
+            if (listTestPath == null)
+                throw new ArgumentException("Test path list cannot be null");
+
             foreach (Requirement requirement in requirements)
             {
                 foreach (Test test in listTestPath)
@@ -65,6 +72,9 @@ namespace PpcEcGenerator.Data
 
         public void ParseInfeasiblePath(List<string> listInfeasiblePaths)
         {
+            if (listInfeasiblePaths == null)
+                throw new ArgumentException("Infeasible paths list cannot be null");
+
             foreach (string infeasiblePath in listInfeasiblePaths)
             {
                 foreach (Requirement requirement in requirements)
