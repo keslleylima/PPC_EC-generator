@@ -18,6 +18,5 @@ namespace PpcEcGenerator.Data
             this.feasible = true;
             this.testPaths = new List<string>();
         }
-
     }
 }

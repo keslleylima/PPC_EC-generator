@@ -98,10 +98,10 @@ namespace PpcEcGenerator.IO
         //---------------------------------------------------------------------
         //		Properties
         //---------------------------------------------------------------------
-        public string PpcFile { get; private set; }
-        public string EcFile { get; private set; }
-        public List<string> TpFiles { get; private set; }
-        public string InfFile { get; private set; }
+        public string PrimePathCoverageFile { get; private set; }
+        public string EdgeCoverageFile { get; private set; }
+        public List<string> TestPathFiles { get; private set; }
+        public string InfeasiblePathFile { get; private set; }
 
 
         //---------------------------------------------------------------------
@@ -109,10 +109,10 @@ namespace PpcEcGenerator.IO
         //---------------------------------------------------------------------
         private void InitializeProperties()
         {
-            PpcFile = string.Empty;
-            EcFile = string.Empty;
-            TpFiles = new List<string>();
-            InfFile = string.Empty;
+            PrimePathCoverageFile = string.Empty;
+            EdgeCoverageFile = string.Empty;
+            TestPathFiles = new List<string>();
+            InfeasiblePathFile = string.Empty;
         }
 
         public void FindMetricsFilesAt(string rootPath)
@@ -122,13 +122,13 @@ namespace PpcEcGenerator.IO
             foreach (string file in GetTextFilesFromDirectory(rootPath))
             {
                 if (file.Contains(ppcPrefix))
-                    PpcFile = file;
+                    PrimePathCoverageFile = file;
                 else if (file.Contains(ecPrefix))
-                    EcFile = file;
+                    EdgeCoverageFile = file;
                 else if (file.Contains(tpPrefix))
-                    TpFiles.Add(file);
+                    TestPathFiles.Add(file);
                 else if (file.Contains(infPrefix))
-                    InfFile = file;
+                    InfeasiblePathFile = file;
             }
         }
 
