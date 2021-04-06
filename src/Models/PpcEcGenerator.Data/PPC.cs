@@ -20,14 +20,14 @@ namespace PpcEcGenerator.Data
         //---------------------------------------------------------------------
         protected override void ParseTestPath(Requirement requirement, Test test)
         {
-            if (requirement.covered == false)
+            if (requirement.Covered == false)
             {
                 test.IncreaseNewPpcCovered();
-                requirement.covered = true;
+                requirement.Covered = true;
             }
 
             test.IncreasePpcCovered();
-            test.AddRequirement(requirement.path);
+            test.AddRequirement(requirement.Path);
             requirement.testPaths.Add(test.Path);
         }
 

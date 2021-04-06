@@ -71,5 +71,10 @@ namespace PpcEcGenerator.Data
         {
             OverallEcCovered++;
         }
+
+        public bool HasPath(string path)
+        {
+            return Path.Contains(path);
+        }
     }
 }

@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 
 namespace PpcEcGenerator.Data
 {
@@ -12,10 +10,7 @@ namespace PpcEcGenerator.Data
         //---------------------------------------------------------------------
         //		Attributes
         //---------------------------------------------------------------------
-        public string path { set; get; }
         public List<string> testPaths;
-        public bool covered;
-        public bool feasible;
 
 
         //---------------------------------------------------------------------
@@ -23,10 +18,27 @@ namespace PpcEcGenerator.Data
         //---------------------------------------------------------------------
         public Requirement(string path)
         {
-            this.path = path;
-            this.covered = false;
-            this.feasible = true;
-            this.testPaths = new List<string>();
+            testPaths = new List<string>();
+            Path = path;
+            Covered = false;
+            Feasible = true;
+        }
+
+
+        //---------------------------------------------------------------------
+        //		Properties
+        //---------------------------------------------------------------------
+        public string Path { get; private set; }
+        public bool Covered { get; set; }
+        public bool Feasible { get; set; }
+
+
+        //---------------------------------------------------------------------
+        //		Methods
+        //---------------------------------------------------------------------
+        public bool HasPath(string path)
+        {
+            return Path.Contains(path);
         }
     }
 }

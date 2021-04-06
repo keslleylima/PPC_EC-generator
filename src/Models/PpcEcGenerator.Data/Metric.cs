@@ -53,7 +53,7 @@ namespace PpcEcGenerator.Data
             {
                 foreach (Test test in listTestPath)
                 {
-                    if (!test.Path.Contains(requirement.path) || requirement.feasible == false)
+                    if (!test.HasPath(requirement.Path) || !requirement.Feasible)
                         continue;
 
                     ParseTestPath(requirement, test);
@@ -69,9 +69,9 @@ namespace PpcEcGenerator.Data
             {
                 foreach (Requirement requirement in requirements)
                 {
-                    if (requirement.path.Contains(infeasiblePath))
+                    if (requirement.HasPath(infeasiblePath))
                     {
-                        requirement.feasible = false;
+                        requirement.Feasible = false;
                     }
                 }
             }
