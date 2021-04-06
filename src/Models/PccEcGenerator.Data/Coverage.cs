@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PccEcGenerator.Data
+namespace PpcEcGenerator.Data
 {
     public class Coverage
     {

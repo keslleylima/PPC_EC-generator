@@ -1,4 +1,4 @@
-﻿using PccEcGenerator.Data;
+﻿using PpcEcGenerator.Data;
 using PpcEcGenerator.Export;
 using PpcEcGenerator.IO;
 using PpcEcGenerator.Parse;
