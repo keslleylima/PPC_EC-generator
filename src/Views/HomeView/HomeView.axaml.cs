@@ -3,6 +3,7 @@ using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using PpcEcGenerator.Controllers;
 using PpcEcGenerator.Style.Color;
+using System;
 
 namespace PpcEcGenerator.Views
 {
@@ -196,13 +197,22 @@ namespace PpcEcGenerator.Views
 
         private void OnGenerate(object sender, RoutedEventArgs e)
         {
-            homeController.OnGenerate(
-                inMetricsRootPath.Text, 
-                inTrPpcFilePrefix.Text,
-                inTrEcFilePrefix.Text,
-                inTpFilePrefix.Text, 
-                inINFFilePrefix.Text
-            );
+            try
+            {
+                homeController.OnGenerate(
+                    inMetricsRootPath.Text,
+                    inTrPpcFilePrefix.Text,
+                    inTrEcFilePrefix.Text,
+                    inTpFilePrefix.Text,
+                    inINFFilePrefix.Text
+                );
+            }
+            catch (Exception ex)
+            {
+                ErrorDialog dialog = new ErrorDialog(ex.ToString());
+
+                dialog.Show();
+            }
         }
     }
 }
