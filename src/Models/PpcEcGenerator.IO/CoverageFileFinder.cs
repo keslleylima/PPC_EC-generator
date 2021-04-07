@@ -27,7 +27,7 @@ namespace PpcEcGenerator.IO
             this.ppcPrefix = ppcPrefix;
             this.ecPrefix = ecPrefix;
             this.tpPrefix = tpPrefix;
-            this.infPrefix = infPrefix;
+            this.infPrefix = infPrefix ?? string.Empty;
 
             InitializeProperties();
         }

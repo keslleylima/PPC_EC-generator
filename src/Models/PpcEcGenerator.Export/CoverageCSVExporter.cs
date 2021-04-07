@@ -41,9 +41,9 @@ namespace PpcEcGenerator.Export
                 {
                     sb.Append(kvp.Key);
                     sb.Append(DELIMITER);
-                    sb.Append(c.EdgeCoverage);
+                    sb.Append(c.EdgeCoverage.ToString("0.0000"));
                     sb.Append(DELIMITER);
-                    sb.Append(c.PrimePathCoverage);
+                    sb.Append(c.PrimePathCoverage.ToString("0.0000"));
                     sb.Append(DELIMITER);
                     sb.Append('\n');
                 }
