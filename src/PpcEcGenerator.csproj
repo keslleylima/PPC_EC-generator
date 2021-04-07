@@ -32,6 +32,16 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
+    <AvaloniaXaml Update="Views\HomeView\HomeView.axaml">
+      <Generator>MSBuild:Compile</Generator>
+    </AvaloniaXaml>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Update="Views\HomeView\HomeView.xaml.cs">
+      <DependentUpon>HomeView.axaml</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
     <Folder Include="Models\PpcEcGenerator.Style.Color\" />
   </ItemGroup>
 </Project>
