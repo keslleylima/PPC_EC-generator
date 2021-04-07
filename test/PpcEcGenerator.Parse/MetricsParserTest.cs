@@ -1,4 +1,4 @@
-﻿using PpcEcGenerator.Data;
+using PpcEcGenerator.Data;
 using PpcEcGenerator.IO;
 using System;
 using System.Collections.Generic;
@@ -112,7 +112,7 @@ namespace PpcEcGenerator.Parse
 
         private void DoParsing()
         {
-            MetricsParser parser = new MetricsParser(projectsFolder + projectName);
+            MetricsParser parser = new MetricsParser(projectsFolder + projectName + Path.DirectorySeparatorChar);
 
             CoverageFileFinder finder = new CoverageFileFinder.Builder()
                 .PrimePathCoveragePrefix(ppcPrefix)
