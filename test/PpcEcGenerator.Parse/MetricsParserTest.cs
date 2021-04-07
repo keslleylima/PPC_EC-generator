@@ -43,7 +43,7 @@ namespace PpcEcGenerator.Parse
         [Fact]
         public void TestParse()
         {
-            UsingProject("Math - reduced");
+            UsingProject("Math - Reduced");
             UsingPpcPrefix("TR_PPC");
             UsingEcPrefix("TR_EC");
             UsingTpPrefix("TP_");
