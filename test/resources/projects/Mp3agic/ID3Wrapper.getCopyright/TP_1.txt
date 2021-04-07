@@ -1,0 +1,2 @@
+com.mpatric.mp3agic.ID3WrapperTest.getCopyrightReturnsV2TagsCopyright()
+[5,2,3,6]

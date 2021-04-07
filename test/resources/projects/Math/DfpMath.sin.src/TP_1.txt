@@ -1,0 +1,2 @@
+org.apache.commons.math4.analysis.function.SincTest.testShortcut()
+[22,2,3,4,5,6,9,11,12,19,21,23]
