@@ -24,6 +24,7 @@ namespace PpcEcGenerator.Parse
         private readonly List<Test> listTestPath = new List<Test>();
         private List<string> listInfeasiblePaths;
         private readonly string projectPath;
+        private Coverage coverage;
 
 
         //---------------------------------------------------------------------
@@ -31,6 +32,9 @@ namespace PpcEcGenerator.Parse
         //---------------------------------------------------------------------
         public MetricsParser(string projectPath)
         {
+            if (string.IsNullOrEmpty(projectPath))
+                throw new ArgumentException("Project path cannot be empty");
+
             this.projectPath = projectPath;
             coverageData = new Dictionary<string, List<Coverage>>();
         }
@@ -41,6 +45,9 @@ namespace PpcEcGenerator.Parse
         //---------------------------------------------------------------------
         public IDictionary<string, List<Coverage>> ParseMetrics(CoverageFileFinder finder)
         {
+            if (finder == null)
+                throw new ArgumentException("Coverage file finder cannot be null");
+
             listInfeasiblePaths = new List<string>();
 
             foreach (string methodPath in Directory.GetDirectories(projectPath))
@@ -68,7 +75,7 @@ namespace PpcEcGenerator.Parse
                 ParseTestPathLines(testPathLines);
                 SortListByPathLength(listTestPath);
                 CalculateCoverage(ppc, ec);
-                StoreCoverage(ppc, ec, testPathLines.First());
+                StoreCoverage(testPathLines.First());
             }
         }
 
@@ -89,15 +96,15 @@ namespace PpcEcGenerator.Parse
         {
             ppc.CountReqCovered(listTestPath);
             ec.CountReqCovered(listTestPath);
-        }
 
-        private void StoreCoverage(PPC ppc, EC ec, string methodId)
-        {
-            Coverage coverage = new Coverage(
+            coverage = new Coverage(
                 ppc.CalculateCoverage(listTestPath),
                 ec.CalculateCoverage(listTestPath)
             );
+        }
 
+        private void StoreCoverage(string methodId)
+        {
             if (coverageData.ContainsKey(methodId))
             {
                 coverageData.TryGetValue(methodId, out List<Coverage> coverageList);

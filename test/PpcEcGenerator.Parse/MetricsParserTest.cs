@@ -50,17 +50,40 @@ namespace PpcEcGenerator.Parse
             DoParsing();
 
             WithSignature("org.apache.commons.math4.analysis.solvers.FieldBracketingNthOrderBrentSolverTest.testConvergenceOnFunctionAccuracy()");
-            ExpectCoverage(0.28, 0.41);
+            ExpectCoverage(7.0/25.0, 18.0/43.0);
             WithSignature("org.apache.commons.math4.dfp.DfpTest.testLog10()");
-            ExpectCoverage(2.75, 2.63);
-            WithSignature("org.apache.commons.math4.dfp.DfpTest.testIsZero()");
-            ExpectCoverage(6.5, 5.14);
-            WithSignature("org.apache.commons.math4.ExtendedFieldElementAbstractTest.testLinearCombinationFaFa()");
-            ExpectCoverage(2.83, 4.88);
-            WithSignature("org.apache.commons.math4.ExtendedFieldElementAbstractTest.testMultiplyInt()");
-            ExpectCoverage(9, 9.79);
+            ExpectCoverage(7.0/4.0 + 1.0/4.0 + 1.0/4.0 + 1.0/4.0 + 1.0/4.0, 18.0/11.0 + 5.0/11.0 + 2.0/11.0 + 2.0/11.0 + 2.0/11.0);
 
             AssertParsingIsAsExpected();
+        }
+
+        [Fact]
+        public void TestParserWithNullProjectPath()
+        {
+            Assert.Throws<ArgumentException>(() =>
+            {
+                new MetricsParser(null);
+            });
+        }
+
+        [Fact]
+        public void TestParserWithEmptyProjectPath()
+        {
+            Assert.Throws<ArgumentException>(() =>
+            {
+                new MetricsParser("");
+            });
+        }
+
+        [Fact]
+        public void TestParserWithNullFinder()
+        {
+            MetricsParser parser = new MetricsParser("foo/bar");
+            
+            Assert.Throws<ArgumentException>(() =>
+            {
+                parser.ParseMetrics(null);
+            });
         }
 
 
@@ -121,15 +144,53 @@ namespace PpcEcGenerator.Parse
 
                 expectedResult.Add(signature, expectedCoverage);
             }
-
-            signature = string.Empty;
-            ppc = 0.0;
-            ec = 0.0;
         }
 
         private void AssertParsingIsAsExpected()
         {
-            Assert.Equal(expectedResult, parsingResult);
+            AssertSameSize(expectedResult, parsingResult);
+
+            foreach (KeyValuePair<string, List<Coverage>> kvp in expectedResult)
+            {
+                parsingResult.TryGetValue(kvp.Key, out List<Coverage> coverageObtained);
+                List<Coverage> expectedCoverage = kvp.Value;
+
+                AssertSameSize(expectedCoverage, coverageObtained);
+
+                for (int i = 0; i < coverageObtained.Count; i++)
+                {
+                    AssertPrimePathCoverage(expectedCoverage[i], coverageObtained[i]);
+                    AssertEdgeCoverage(expectedCoverage[i], coverageObtained[i]);
+                }
+            }
+        }
+
+        private void AssertSameSize<T1, T2>(IDictionary<T1,T2> d1, IDictionary<T1, T2> d2)
+        {
+            Assert.Equal(d1.Count, d2.Count);
+        }
+
+        private void AssertSameSize<T>(IList<T> l1, IList<T> l2)
+        {
+            Assert.Equal(l1.Count, l2.Count);
+        }
+
+        private void AssertPrimePathCoverage(Coverage expected, Coverage obtained)
+        {
+            Assert.Equal(
+                expected.PrimePathCoverage,
+                obtained.PrimePathCoverage,
+                2
+            );
+        }
+
+        private void AssertEdgeCoverage(Coverage expected, Coverage obtained)
+        {
+            Assert.Equal(
+                expected.EdgeCoverage,
+                obtained.EdgeCoverage,
+                2
+            );
         }
     }
 }
