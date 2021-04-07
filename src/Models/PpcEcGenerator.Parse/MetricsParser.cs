@@ -19,7 +19,7 @@ namespace PpcEcGenerator.Parse
         ///     Key:    idTestPathFile
         ///     Value:  Coverage data
         /// </summary>
-        private readonly Dictionary<string, List<Coverage>> coverageData;
+        private readonly IDictionary<string, List<Coverage>> coverageData;
 
         private readonly List<Test> listTestPath = new List<Test>();
         private List<string> listInfeasiblePaths;
@@ -32,13 +32,14 @@ namespace PpcEcGenerator.Parse
         public MetricsParser(string projectPath)
         {
             this.projectPath = projectPath;
+            coverageData = new Dictionary<string, List<Coverage>>();
         }
 
 
         //---------------------------------------------------------------------
         //		Methods
         //---------------------------------------------------------------------
-        public Dictionary<string, List<Coverage>> ParseMetrics(CoverageFileFinder finder)
+        public IDictionary<string, List<Coverage>> ParseMetrics(CoverageFileFinder finder)
         {
             listInfeasiblePaths = new List<string>();
 

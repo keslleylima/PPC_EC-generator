@@ -40,5 +40,15 @@ namespace PpcEcGenerator.Data
         {
             return Path.Contains(path);
         }
+
+        public override string ToString()
+        {
+            return $"Requirement ["
+                + $"Path: {Path}; "
+                + $"Covered: {Covered}; "
+                + $"Feasible: {Feasible}; "
+                + $"testPaths: {testPaths}"
+            + $"]";
+        }
     }
 }

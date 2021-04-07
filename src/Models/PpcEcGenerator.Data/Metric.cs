@@ -91,5 +91,10 @@ namespace PpcEcGenerator.Data
         {
             return requirements.Count;
         }
+
+        public override string ToString()
+        {
+            return $"Metric [requirements: {requirements}]";
+        }
     }
 }

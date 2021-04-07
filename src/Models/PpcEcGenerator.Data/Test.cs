@@ -76,5 +76,18 @@ namespace PpcEcGenerator.Data
         {
             return Path.Contains(path);
         }
+
+        public override string ToString()
+        {
+            return $"Test ["
+                + $"Path: {Path}; "
+                + $"PathLength: {PathLength}; "
+                + $"NewPpcCovered: {NewPpcCovered}; "
+                + $"NewEcCovered: {NewEcCovered}; "
+                + $"OverallPpcCovered: {OverallPpcCovered}; "
+                + $"OverallEcCovered: {OverallEcCovered}; "
+                + $"Requirements: {requirements}"
+            + $"]";
+        }
     }
 }
