@@ -19,7 +19,7 @@ jobs:
     - name: Clean
       run: dotnet clean
     - name: Restore dependencies
-      run: dotnet restore
+      run: dotnet restore && dotnet nuget locals all --clear
     - name: Build
       run: dotnet build --no-restore /p:ContinuousIntegrationBuild=true
     - name: Test
