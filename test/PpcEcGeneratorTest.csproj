@@ -9,6 +9,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <AvaloniaXaml Remove="PpcEcGenerator.Data\**" />
+    <Compile Remove="PpcEcGenerator.Data\**" />
+    <EmbeddedResource Remove="PpcEcGenerator.Data\**" />
+    <None Remove="PpcEcGenerator.Data\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.2.0" />
     <PackageReference Include="xunit" Version="2.4.0" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.4.0" />
