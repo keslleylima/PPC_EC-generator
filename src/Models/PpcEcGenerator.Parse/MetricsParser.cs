@@ -21,9 +21,9 @@ namespace PpcEcGenerator.Parse
         /// </summary>
         private readonly IDictionary<string, List<Coverage>> coverageData;
 
-        private readonly List<Test> listTestPath = new List<Test>();
-        private List<string> listInfeasiblePaths;
         private readonly string projectPath;
+        private List<Test> listTestPath;
+        private List<string> listInfeasiblePaths;
         private Coverage coverage;
 
 
@@ -52,6 +52,8 @@ namespace PpcEcGenerator.Parse
 
             foreach (string methodPath in Directory.GetDirectories(projectPath))
             {
+                listTestPath = new List<Test>();
+
                 finder.FindMetricsFilesAt(methodPath);
 
                 if (HasMissingMetrics(finder))

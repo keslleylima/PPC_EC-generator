@@ -52,7 +52,7 @@ namespace PpcEcGenerator.Parse
             WithSignature("org.apache.commons.math4.analysis.solvers.FieldBracketingNthOrderBrentSolverTest.testConvergenceOnFunctionAccuracy()");
             ExpectCoverage(7.0/25.0, 18.0/43.0);
             WithSignature("org.apache.commons.math4.dfp.DfpTest.testLog10()");
-            ExpectCoverage(7.0/4.0 + 1.0/4.0 + 1.0/4.0 + 1.0/4.0 + 1.0/4.0, 18.0/11.0 + 5.0/11.0 + 2.0/11.0 + 2.0/11.0 + 2.0/11.0);
+            ExpectCoverage(1, 1);
 
             AssertParsingIsAsExpected();
         }
