@@ -17,7 +17,7 @@ jobs:
       with:
         dotnet-version: 5.0.x
     - name: Clean
-      run: dotnet clean
+      run: dotnet clean ./PPC_EC-generator/PPC_EC-generator.sln --configuration Release && dotnet nuget locals all --clear
     - name: Restore dependencies
       run: dotnet restore && dotnet nuget locals all --clear
     - name: Build
