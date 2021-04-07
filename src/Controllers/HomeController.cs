@@ -38,11 +38,42 @@ namespace PpcEcGenerator.Controllers
                     : "";
         }
 
-        public void OnGenerate(string metricsRootPath, string trPpcFilePrefix,
+        public async void OnGenerate(string metricsRootPath, string trPpcFilePrefix,
                                string trEcFilePrefix, string tpFilePrefix, 
                                string infFilePrefix)
         {
-            window.NavigateToEndView("output");
+            string outputPath = await AskUserForSavePath();
+
+            PpcEcGenerator generator = new PpcEcGenerator.Builder()
+                .ProjectPath(metricsRootPath)
+                .OutputPath(outputPath)
+                .PrimePathCoveragePrefix(trPpcFilePrefix)
+                .EdgeCoveragePrefix(trEcFilePrefix)
+                .TestPathPrefix(tpFilePrefix)
+                .InfeasiblePathPrefix(infFilePrefix)
+                .Build();
+
+            window.NavigateToEndView(generator.GenerateCoverage());
+        }
+
+        private async Task<string> AskUserForSavePath()
+        {
+            SaveFileDialog dialog = new SaveFileDialog();
+
+            dialog.DefaultExtension = "csv";
+            dialog.InitialFileName = "CodeCoverage";
+            dialog.Title = "Save metrics file";
+            dialog.Filters.Add(new FileDialogFilter()
+            { 
+                Name = "Metrics file", 
+                Extensions = { "csv" } 
+            });
+
+            string result = await dialog.ShowAsync(window);
+
+            return ((result != null) && (result.Length > 0))
+                    ? result
+                    : "";
         }
     }
 }
