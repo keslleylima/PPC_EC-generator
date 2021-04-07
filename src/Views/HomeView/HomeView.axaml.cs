@@ -113,7 +113,6 @@ namespace PpcEcGenerator.Views
         {
             btnGenerate = this.FindControl<Button>("btnGenerate");
 
-            btnGenerate.Click += OnGenerate;
             btnGenerate.Background = ColorBrushFactory.ThemeAccent();
         }
 
