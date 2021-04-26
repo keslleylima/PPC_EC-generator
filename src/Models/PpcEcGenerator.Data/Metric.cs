@@ -36,9 +36,10 @@ namespace PpcEcGenerator.Data
 
             foreach (string req in fileReq)
             {
-                string path = ExtractPathFrom(req);
-                
-                requirements.Add(new Requirement(path));
+                if (req.Length == 0)
+                    continue;
+
+                requirements.Add(new Requirement(ExtractPathFrom(req)));
             }
         }
 
