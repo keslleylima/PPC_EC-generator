@@ -29,7 +29,7 @@ namespace PpcEcGenerator.Data
 
             test.IncreaseEcCovered();
             test.AddRequirement(requirement.Path);
-            requirement.testPaths.Add(test.Path);
+            requirement.AddTestPath(test.Path);
         }
 
         public double CalculateCoverage(List<Test> listTestPath)

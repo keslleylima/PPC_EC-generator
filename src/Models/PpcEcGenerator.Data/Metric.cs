@@ -59,12 +59,12 @@ namespace PpcEcGenerator.Data
 
             foreach (Requirement requirement in requirements)
             {
-                foreach (Test test in listTestPath)
+                foreach (Test testPath in listTestPath)
                 {
-                    if (!test.HasPath(requirement.Path) || !requirement.Feasible)
+                    if (!testPath.HasPath(requirement.Path) || !requirement.Feasible)
                         continue;
 
-                    ParseTestPath(requirement, test);
+                    ParseTestPath(requirement, testPath);
                 }
             }
         }

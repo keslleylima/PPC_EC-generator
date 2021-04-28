@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using PpcEcGenerator.Util;
 
 namespace PpcEcGenerator.Parse
 {
@@ -76,7 +77,12 @@ namespace PpcEcGenerator.Parse
                 ParseInfeasiblePaths(finder.InfeasiblePathFile, ppc, ec);
                 ParseTestPathLines(testPathLines);
                 SortListByPathLength(listTestPath);
-                CalculateCoverage(ppc, ec);
+                CalculateCoverage(
+                    testPathLines.First(),
+                    PathToSignature.TestPathToSignature(testPathFile), 
+                    ppc, 
+                    ec
+                );
                 StoreCoverage(testPathLines.First());
             }
         }
@@ -94,12 +100,14 @@ namespace PpcEcGenerator.Parse
             return line.Trim(new Char[] { ' ', '[', ']', '\n' });
         }
 
-        private void CalculateCoverage(PPC ppc, EC ec)
+        private void CalculateCoverage(string testMethod, string coveredMethod, PPC ppc, EC ec)
         {
             ppc.CountReqCovered(listTestPath);
             ec.CountReqCovered(listTestPath);
 
             coverage = new Coverage(
+                testMethod,
+                coveredMethod,
                 ppc.CalculateCoverage(listTestPath),
                 ec.CalculateCoverage(listTestPath)
             );

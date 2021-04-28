@@ -134,13 +134,13 @@ namespace PpcEcGenerator.Parse
             {
                 expectedResult.TryGetValue(signature, out List<Coverage> expectedCoverage);
 
-                expectedCoverage.Add(new Coverage(ppc, ec));
+                expectedCoverage.Add(new Coverage(signature, "", ppc, ec));
             }
             else
             {
                 List<Coverage> expectedCoverage = new List<Coverage>();
                 
-                expectedCoverage.Add(new Coverage(ppc, ec));
+                expectedCoverage.Add(new Coverage(signature, "", ppc, ec));
 
                 expectedResult.Add(signature, expectedCoverage);
             }

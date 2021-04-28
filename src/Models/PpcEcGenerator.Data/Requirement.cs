@@ -10,7 +10,7 @@ namespace PpcEcGenerator.Data
         //---------------------------------------------------------------------
         //		Attributes
         //---------------------------------------------------------------------
-        public List<string> testPaths;
+        private List<string> testPaths;
 
 
         //---------------------------------------------------------------------
@@ -39,6 +39,11 @@ namespace PpcEcGenerator.Data
         public bool HasPath(string path)
         {
             return Path.Contains(path);
+        }
+
+        public void AddTestPath(string testPath)
+        {
+            testPaths.Add(testPath);
         }
 
         public override string ToString()
