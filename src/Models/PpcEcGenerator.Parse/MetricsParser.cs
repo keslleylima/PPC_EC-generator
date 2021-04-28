@@ -59,13 +59,13 @@ namespace PpcEcGenerator.Parse
                 if (HasMissingMetrics(finder))
                     continue;
 
-                ParseTestPathFiles(finder);
+                ParseMetricsFiles(finder);
             }
 
             return coverageData;
         }
 
-        private void ParseTestPathFiles(CoverageFileFinder finder)
+        private void ParseMetricsFiles(CoverageFileFinder finder)
         {
             foreach (string testPathFile in finder.TestPathFiles)
             {
@@ -123,10 +123,11 @@ namespace PpcEcGenerator.Parse
             }
         }
 
-        private bool HasMissingMetrics(CoverageFileFinder finder)
+        private static bool HasMissingMetrics(CoverageFileFinder finder)
         {
             return  (finder.PrimePathCoverageFile == string.Empty)
-                    || (finder.EdgeCoverageFile == string.Empty);
+                    || (finder.EdgeCoverageFile == string.Empty)
+                    || (finder.TestPathFiles.Count == 0);
         }
 
         private void ParseInfeasiblePaths(string infPathFile, PPC ppc, EC ec)

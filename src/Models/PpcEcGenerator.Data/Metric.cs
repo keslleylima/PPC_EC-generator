@@ -36,7 +36,7 @@ namespace PpcEcGenerator.Data
 
             foreach (string req in fileReq)
             {
-                if (req.Length == 0)
+                if ((req.Length == 0) || !req.Contains("["))
                     continue;
 
                 requirements.Add(new Requirement(ExtractPathFrom(req)));
