@@ -129,13 +129,13 @@ namespace PpcEcGenerator.IO
 
             foreach (string file in GetTextFilesFromDirectory(rootPath))
             {
-                if (file.Contains(ppcPrefix))
+                if (Path.GetFileName(file).Contains(ppcPrefix))
                     PrimePathCoverageFile = file;
-                else if (file.Contains(ecPrefix))
+                else if (Path.GetFileName(file).Contains(ecPrefix))
                     EdgeCoverageFile = file;
-                else if (file.Contains(tpPrefix))
+                else if (Path.GetFileName(file).Contains(tpPrefix))
                     TestPathFiles.Add(file);
-                else if (file.Contains(infPrefix))
+                else if (Path.GetFileName(file).Contains(infPrefix))
                     InfeasiblePathFile = file;
             }
         }

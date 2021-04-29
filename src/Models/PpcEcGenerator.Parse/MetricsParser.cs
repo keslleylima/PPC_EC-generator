@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using PpcEcGenerator.Util;
 
 namespace PpcEcGenerator.Parse
 {
@@ -59,13 +60,13 @@ namespace PpcEcGenerator.Parse
                 if (HasMissingMetrics(finder))
                     continue;
 
-                ParseTestPathFiles(finder);
+                ParseMetricsFiles(finder);
             }
 
             return coverageData;
         }
 
-        private void ParseTestPathFiles(CoverageFileFinder finder)
+        private void ParseMetricsFiles(CoverageFileFinder finder)
         {
             foreach (string testPathFile in finder.TestPathFiles)
             {
@@ -76,7 +77,12 @@ namespace PpcEcGenerator.Parse
                 ParseInfeasiblePaths(finder.InfeasiblePathFile, ppc, ec);
                 ParseTestPathLines(testPathLines);
                 SortListByPathLength(listTestPath);
-                CalculateCoverage(ppc, ec);
+                CalculateCoverage(
+                    testPathLines.First(),
+                    PathToSignature.TestPathToSignature(testPathFile), 
+                    ppc, 
+                    ec
+                );
                 StoreCoverage(testPathLines.First());
             }
         }
@@ -94,12 +100,14 @@ namespace PpcEcGenerator.Parse
             return line.Trim(new Char[] { ' ', '[', ']', '\n' });
         }
 
-        private void CalculateCoverage(PPC ppc, EC ec)
+        private void CalculateCoverage(string testMethod, string coveredMethod, PPC ppc, EC ec)
         {
             ppc.CountReqCovered(listTestPath);
             ec.CountReqCovered(listTestPath);
 
             coverage = new Coverage(
+                testMethod,
+                coveredMethod,
                 ppc.CalculateCoverage(listTestPath),
                 ec.CalculateCoverage(listTestPath)
             );
@@ -123,10 +131,11 @@ namespace PpcEcGenerator.Parse
             }
         }
 
-        private bool HasMissingMetrics(CoverageFileFinder finder)
+        private static bool HasMissingMetrics(CoverageFileFinder finder)
         {
             return  (finder.PrimePathCoverageFile == string.Empty)
-                    || (finder.EdgeCoverageFile == string.Empty);
+                    || (finder.EdgeCoverageFile == string.Empty)
+                    || (finder.TestPathFiles.Count == 0);
         }
 
         private void ParseInfeasiblePaths(string infPathFile, PPC ppc, EC ec)

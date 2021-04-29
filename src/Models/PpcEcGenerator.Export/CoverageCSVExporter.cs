@@ -33,13 +33,15 @@ namespace PpcEcGenerator.Export
             StringBuilder sb = new StringBuilder();
 
             if (!File.Exists(output))
-                sb.Append("Id;EdgeCoverage;PrimePathCoverage\n");
+                sb.Append("TestMethod;TestedMethod;EdgeCoverage;PrimePathCoverage\n");
 
             foreach (KeyValuePair<string, List<Coverage>> kvp in coverage)
             {
                 foreach (Coverage c in kvp.Value)
                 {
-                    sb.Append(kvp.Key);
+                    sb.Append(c.TestMethod);
+                    sb.Append(DELIMITER);
+                    sb.Append(c.CoveredMethod);
                     sb.Append(DELIMITER);
                     sb.Append(c.EdgeCoverage.ToString("0.0000"));
                     sb.Append(DELIMITER);

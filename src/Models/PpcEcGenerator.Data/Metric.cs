@@ -36,9 +36,10 @@ namespace PpcEcGenerator.Data
 
             foreach (string req in fileReq)
             {
-                string path = ExtractPathFrom(req);
-                
-                requirements.Add(new Requirement(path));
+                if ((req.Length == 0) || !req.Contains("["))
+                    continue;
+
+                requirements.Add(new Requirement(ExtractPathFrom(req)));
             }
         }
 
@@ -58,12 +59,12 @@ namespace PpcEcGenerator.Data
 
             foreach (Requirement requirement in requirements)
             {
-                foreach (Test test in listTestPath)
+                foreach (Test testPath in listTestPath)
                 {
-                    if (!test.HasPath(requirement.Path) || !requirement.Feasible)
+                    if (!testPath.HasPath(requirement.Path) || !requirement.Feasible)
                         continue;
 
-                    ParseTestPath(requirement, test);
+                    ParseTestPath(requirement, testPath);
                 }
             }
         }
