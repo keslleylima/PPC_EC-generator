@@ -91,6 +91,9 @@ namespace PpcEcGenerator.Parse
 
             foreach (string methodPath in metricsDirectories)
             {
+                progress.Forward();
+                NotifyAll();
+
                 listTestPath = new List<Test>();
 
                 finder.FindMetricsFilesAt(methodPath);
@@ -99,9 +102,6 @@ namespace PpcEcGenerator.Parse
                     continue;
 
                 ParseMetricsFiles(finder);
-
-                progress.Forward();
-                NotifyAll();
             }
 
             return coverageData;

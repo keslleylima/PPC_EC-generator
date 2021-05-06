@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -21,13 +22,17 @@ namespace PpcEcGenerator.Util
         //---------------------------------------------------------------------
         public static string TestPathToSignature(string path)
         {
-            List<string> invertedSignature = TPPathToInvertedSignature(path);
+            string directoryPath = Directory.GetParent(path)?.FullName ?? "";
+            List<string> invertedSignature = TPPathToInvertedSignature(directoryPath);
             
             return InvertedSignatureToMethodSignature(invertedSignature);
         }
 
         private static List<string> TPPathToInvertedSignature(string path)
         {
+            if (path.Length == 0)
+                return new List<string>();
+
             string[] terms = path.Split("\\");
             List<string> invertedSignature = new List<string>();
 
