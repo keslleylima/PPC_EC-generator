@@ -23,6 +23,8 @@ namespace PpcEcGenerator.Data
             if (string.IsNullOrEmpty(filePath))
                 throw new ArgumentException("File metrics cannot be empty");
 
+            requirements = new List<Requirement>();
+
             CreateRequirementsFrom(File.ReadAllLines(filePath));
         }
 
@@ -32,8 +34,6 @@ namespace PpcEcGenerator.Data
         //---------------------------------------------------------------------
         private void CreateRequirementsFrom(string[] fileReq)
         {
-            requirements = new List<Requirement>();
-
             foreach (string req in fileReq)
             {
                 if ((req.Length == 0) || !req.Contains("["))

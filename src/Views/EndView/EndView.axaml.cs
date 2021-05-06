@@ -11,7 +11,7 @@ namespace PpcEcGenerator.Views
         //---------------------------------------------------------------------
         //		Attributes
         //---------------------------------------------------------------------
-        private MainWindow window;
+        private readonly MainWindow? window;
 
 
         //---------------------------------------------------------------------
@@ -61,9 +61,9 @@ namespace PpcEcGenerator.Views
             progressBar.Foreground = ColorBrushFactory.ThemeAccent();
         }
 
-        private async void OnGoBackToHome(object sender, RoutedEventArgs e)
+        private void OnGoBackToHome(object sender, RoutedEventArgs e)
         {
-            window.NavigateToHomeView();
+            window?.NavigateToHomeView();
         }
 
         private void OnQuit(object sender, RoutedEventArgs e)

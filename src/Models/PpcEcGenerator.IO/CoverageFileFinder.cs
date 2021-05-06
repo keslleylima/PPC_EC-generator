@@ -29,7 +29,10 @@ namespace PpcEcGenerator.IO
             this.tpPrefix = tpPrefix;
             this.infPrefix = infPrefix ?? string.Empty;
 
-            InitializeProperties();
+            PrimePathCoverageFile = string.Empty;
+            EdgeCoverageFile = string.Empty;
+            TestPathFiles = new List<string>();
+            InfeasiblePathFile = string.Empty;
         }
 
 
@@ -45,6 +48,9 @@ namespace PpcEcGenerator.IO
 
             public Builder()
             {
+                ppcPrefix = string.Empty;
+                ecPrefix = string.Empty;
+                tpPrefix = string.Empty;
                 infPrefix = string.Empty;
             }
 
@@ -115,17 +121,12 @@ namespace PpcEcGenerator.IO
         //---------------------------------------------------------------------
         //		Methods
         //---------------------------------------------------------------------
-        private void InitializeProperties()
+        public void FindMetricsFilesAt(string rootPath)
         {
             PrimePathCoverageFile = string.Empty;
             EdgeCoverageFile = string.Empty;
             TestPathFiles = new List<string>();
             InfeasiblePathFile = string.Empty;
-        }
-
-        public void FindMetricsFilesAt(string rootPath)
-        {
-            InitializeProperties();
 
             foreach (string file in GetTextFilesFromDirectory(rootPath))
             {

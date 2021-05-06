@@ -25,7 +25,7 @@ namespace PpcEcGenerator
         private readonly string projectPath;
         private readonly string outputPath;
         private readonly CoverageFileFinder finder;
-        private IDictionary<string, List<Coverage>> coverageData;
+        private IDictionary<string, List<Coverage>> coverageData = default!;
         private readonly List<IClassObserver> observers;
 
 
@@ -54,10 +54,16 @@ namespace PpcEcGenerator
             private string ecPrefix;
             private string tpPrefix;
             private string infPrefix;
-            private List<IClassObserver> observers;
+            private readonly List<IClassObserver> observers;
 
             public Builder()
             {
+                projectPath = string.Empty;
+                outputPath = string.Empty;
+                ppcPrefix = string.Empty;
+                ecPrefix = string.Empty;
+                tpPrefix = string.Empty;
+                infPrefix = string.Empty;
                 observers = new List<IClassObserver>();
             }
 

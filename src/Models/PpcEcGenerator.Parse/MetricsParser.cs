@@ -23,12 +23,12 @@ namespace PpcEcGenerator.Parse
         /// </summary>
         private readonly IDictionary<string, List<Coverage>> coverageData;
 
-        private List<string> metricsDirectories;
+        private readonly List<string> metricsDirectories;
         private List<TestPath> listTestPath;
         private List<List<int>> listInfeasiblePaths;
         private Coverage coverage;
-        private List<IClassObserver> observers;
-        private ProcessingProgress progress;
+        private readonly List<IClassObserver> observers;
+        private readonly ProcessingProgress progress;
 
 
         //---------------------------------------------------------------------
@@ -45,6 +45,9 @@ namespace PpcEcGenerator.Parse
             
             FindDirectories(projectPath);
             progress = new ProcessingProgress(0, metricsDirectories.Count, 0);
+            listTestPath = default!;
+            listInfeasiblePaths = default!;
+            coverage = default!;
         }
 
 
@@ -182,9 +185,9 @@ namespace PpcEcGenerator.Parse
         {
             if (coverageData.ContainsKey(methodId))
             {
-                coverageData.TryGetValue(methodId, out List<Coverage> coverageList);
+                coverageData.TryGetValue(methodId, out var coverageList);
 
-                coverageList.Add(coverage);
+                coverageList?.Add(coverage);
             }
             else
             {

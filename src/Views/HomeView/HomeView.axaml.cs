@@ -14,14 +14,14 @@ namespace PpcEcGenerator.Views
         //---------------------------------------------------------------------
         //		Attributes
         //---------------------------------------------------------------------
-        private TextBox inMetricsRootPath;
-        private TextBox inTrPpcFilePrefix;
-        private TextBox inTrEcFilePrefix;
-        private TextBox inTpFilePrefix;
-        private TextBox inINFFilePrefix;
-        private Button btnGenerate;
-        private HomeController homeController;
-        private ProgressBar progressBar;
+        private TextBox inMetricsRootPath = default!;
+        private TextBox inTrPpcFilePrefix = default!;
+        private TextBox inTrEcFilePrefix = default!;
+        private TextBox inTpFilePrefix = default!;
+        private TextBox inINFFilePrefix = default!;
+        private Button btnGenerate = default!;
+        private readonly HomeController homeController;
+        private ProgressBar progressBar = default!;
 
 
         //---------------------------------------------------------------------
@@ -29,6 +29,8 @@ namespace PpcEcGenerator.Views
         //---------------------------------------------------------------------
         public HomeView()
         {
+            homeController = default!;
+
             InitializeComponent();
             BuildProgressBar();
             BuildChooseMetricsRootPathButton();
