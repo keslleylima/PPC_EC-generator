@@ -2,12 +2,14 @@ using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using PpcEcGenerator.Controllers;
+using PpcEcGenerator.Data;
 using PpcEcGenerator.Style.Color;
+using PpcEcGenerator.Util;
 using System;
 
 namespace PpcEcGenerator.Views
 {
-    public class HomeView : UserControl
+    public class HomeView : UserControl, IClassObserver
     {
         //---------------------------------------------------------------------
         //		Attributes
@@ -19,6 +21,7 @@ namespace PpcEcGenerator.Views
         private TextBox inINFFilePrefix;
         private Button btnGenerate;
         private HomeController homeController;
+        private ProgressBar progressBar;
 
 
         //---------------------------------------------------------------------
@@ -40,17 +43,23 @@ namespace PpcEcGenerator.Views
 
         public HomeView(MainWindow window) : this()
         {
-            homeController = new HomeController(window);
+            homeController = new HomeController(window, this);
         }
 
 
         //---------------------------------------------------------------------
         //		Methods
         //---------------------------------------------------------------------
+        public void Update(IClassObservable observable, object data)
+        {
+            ProcessingProgress progress = (ProcessingProgress) data;
+
+            progressBar.Value = (progress.Current + 1) % 101;
+        }
+
         private void BuildProgressBar()
         {
-            ProgressBar progressBar = this.FindControl<ProgressBar>("progressBar");
-
+            progressBar = this.FindControl<ProgressBar>("progressBar");
             progressBar.Background = ColorBrushFactory.Theme();
             progressBar.Foreground = ColorBrushFactory.ThemeAccent();
         }

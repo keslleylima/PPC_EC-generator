@@ -2,6 +2,7 @@
 using PpcEcGenerator.Export;
 using PpcEcGenerator.IO;
 using PpcEcGenerator.Parse;
+using PpcEcGenerator.Util;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -25,16 +26,20 @@ namespace PpcEcGenerator
         private readonly string outputPath;
         private readonly CoverageFileFinder finder;
         private IDictionary<string, List<Coverage>> coverageData;
+        private readonly List<IClassObserver> observers;
 
 
         //---------------------------------------------------------------------
         //		Constructor
         //---------------------------------------------------------------------
-        private PpcEcGenerator(string projectPath, string outputPath, CoverageFileFinder finder)
+        private PpcEcGenerator(string projectPath, string outputPath, 
+                               CoverageFileFinder finder, 
+                               List<IClassObserver> observers)
         {
             this.projectPath = projectPath;
             this.outputPath = outputPath;
             this.finder = finder;
+            this.observers = observers;
         }
 
 
@@ -49,9 +54,11 @@ namespace PpcEcGenerator
             private string ecPrefix;
             private string tpPrefix;
             private string infPrefix;
+            private List<IClassObserver> observers;
 
             public Builder()
             {
+                observers = new List<IClassObserver>();
             }
 
             public Builder ProjectPath(string path)
@@ -96,6 +103,13 @@ namespace PpcEcGenerator
                 return this;
             }
 
+            public Builder WithObserver(IClassObserver observer)
+            {
+                observers.Add(observer);
+
+                return this;
+            }
+
             public PpcEcGenerator Build()
             {
                 CheckRequiredFields();
@@ -108,7 +122,7 @@ namespace PpcEcGenerator
                     .Build();
 
 
-                return new PpcEcGenerator(projectPath, outputPath, finder);
+                return new PpcEcGenerator(projectPath, outputPath, finder, observers);
             }
 
             private void CheckRequiredFields()
@@ -154,6 +168,11 @@ namespace PpcEcGenerator
         private void DoParsing()
         {
             MetricsParser parser = new MetricsParser(projectPath);
+
+            foreach (IClassObserver observer in observers)
+            {
+                parser.Attach(observer);
+            }
 
             coverageData = parser.ParseMetrics(finder);
         }

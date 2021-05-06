@@ -5,13 +5,14 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using PpcEcGenerator.Util;
+using System.Text.RegularExpressions;
 
 namespace PpcEcGenerator.Parse
 {
     /// <summary>
     ///     Responsible for parsing metrics files.
     /// </summary>
-    public class MetricsParser
+    public class MetricsParser : IClassObservable
     {
         //---------------------------------------------------------------------
         //		Attributes
@@ -22,10 +23,12 @@ namespace PpcEcGenerator.Parse
         /// </summary>
         private readonly IDictionary<string, List<Coverage>> coverageData;
 
-        private readonly string projectPath;
+        private List<string> metricsDirectories;
         private List<Test> listTestPath;
         private List<string> listInfeasiblePaths;
         private Coverage coverage;
+        private List<IClassObserver> observers;
+        private ProcessingProgress progress;
 
 
         //---------------------------------------------------------------------
@@ -36,14 +39,49 @@ namespace PpcEcGenerator.Parse
             if (string.IsNullOrEmpty(projectPath))
                 throw new ArgumentException("Project path cannot be empty");
 
-            this.projectPath = projectPath;
             coverageData = new Dictionary<string, List<Coverage>>();
+            observers = new List<IClassObserver>();
+            metricsDirectories = new List<string>();
+            
+            FindDirectories(projectPath);
+            progress = new ProcessingProgress(0, metricsDirectories.Count, 0);
         }
 
 
         //---------------------------------------------------------------------
         //		Methods
         //---------------------------------------------------------------------
+        private void FindDirectories(string path)
+        {
+            foreach (string file in Directory.GetFiles(path, "*.txt", SearchOption.AllDirectories))
+            {
+                string directory = Directory.GetParent(file)?.FullName ?? "";
+
+                if ((directory != "") && !metricsDirectories.Contains(directory))
+                {
+                    metricsDirectories.Add(directory);
+                }
+            }
+        }
+
+        public void Attach(IClassObserver observer)
+        {
+            observers.Add(observer);
+        }
+
+        public void Detach(IClassObserver observer)
+        {
+            observers.Remove(observer);
+        }
+
+        public void NotifyAll()
+        {
+            foreach (IClassObserver observer in observers)
+            {
+                observer.Update(this, progress);
+            }
+        }
+
         public IDictionary<string, List<Coverage>> ParseMetrics(CoverageFileFinder finder)
         {
             if (finder == null)
@@ -51,7 +89,7 @@ namespace PpcEcGenerator.Parse
 
             listInfeasiblePaths = new List<string>();
 
-            foreach (string methodPath in Directory.GetDirectories(projectPath))
+            foreach (string methodPath in metricsDirectories)
             {
                 listTestPath = new List<Test>();
 
@@ -61,6 +99,9 @@ namespace PpcEcGenerator.Parse
                     continue;
 
                 ParseMetricsFiles(finder);
+
+                progress.Forward();
+                NotifyAll();
             }
 
             return coverageData;
@@ -91,8 +132,16 @@ namespace PpcEcGenerator.Parse
         {
             foreach (string line in fileTestPath.Distinct().ToArray().Skip(1))
             {
-                listTestPath.Add(new Test(ExtractCodePathFrom(line)));
+                if (ContainsPath(line))
+                    listTestPath.Add(new Test(ExtractCodePathFrom(line)));
             }
+        }
+
+        private bool ContainsPath(string line)
+        {
+            Regex pathRegex = new Regex(".*\\[.+\\].*");
+            
+            return pathRegex.IsMatch(line);
         }
 
         private string ExtractCodePathFrom(string line)
@@ -145,7 +194,8 @@ namespace PpcEcGenerator.Parse
 
             foreach (string line in File.ReadAllLines(infPathFile))
             {
-                listInfeasiblePaths.Add(ExtractCodePathFrom(line));
+                if (ContainsPath(line))
+                    listInfeasiblePaths.Add(ExtractCodePathFrom(line));
             }
 
             ppc.ParseInfeasiblePath(listInfeasiblePaths);

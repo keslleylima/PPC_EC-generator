@@ -13,14 +13,16 @@ namespace PpcEcGenerator.Controllers
         //		Attributes
         //---------------------------------------------------------------------
         private MainWindow window;
+        private HomeView homeView;
 
 
         //---------------------------------------------------------------------
         //		Constructors
         //---------------------------------------------------------------------
-        public HomeController(MainWindow window)
+        public HomeController(MainWindow window, HomeView homeView)
         {
             this.window = window;
+            this.homeView = homeView;
         }
 
 
@@ -51,9 +53,12 @@ namespace PpcEcGenerator.Controllers
                 .EdgeCoveragePrefix(trEcFilePrefix)
                 .TestPathPrefix(tpFilePrefix)
                 .InfeasiblePathPrefix(infFilePrefix)
+                .WithObserver(homeView)
                 .Build();
 
-            window.NavigateToEndView(generator.GenerateCoverage());
+            string output = generator.GenerateCoverage();
+
+            window.NavigateToEndView(output);
         }
 
         private async Task<string> AskUserForSavePath()
