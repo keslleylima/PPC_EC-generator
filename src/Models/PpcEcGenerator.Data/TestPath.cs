@@ -31,7 +31,7 @@ namespace PpcEcGenerator.Data
         {
             foreach (int lineNumber in path)
             {
-                if (!path.Contains(lineNumber))
+                if (!Path.Contains(lineNumber))
                     return false;
             }
 
