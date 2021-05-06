@@ -65,6 +65,7 @@
                     HorizontalAlignment="Stretch"
                     VerticalAlignment="Stretch"
                     Background="#FF151515"
+                    Text="PPC"
           />
           <Button Name="btnClearTRPPCFilePrefix"
                   Click="OnClearTRPPCFilePrefix"
@@ -91,6 +92,7 @@
                     HorizontalAlignment="Stretch"
                     VerticalAlignment="Stretch"
                     Background="#FF151515"
+                    Text="EC"
           />
           <Button Name="btnClearTRECFilePrefix"
                   Click="OnClearTRECFilePrefix"
@@ -117,6 +119,7 @@
                     HorizontalAlignment="Stretch"
                     VerticalAlignment="Stretch"
                     Background="#FF151515"
+                    Text="TP"
           />
           <Button Name="btnClearTPFilePrefix"
                   Click="OnClearTPFilePrefix"
@@ -143,6 +146,7 @@
                     HorizontalAlignment="Stretch"
                     VerticalAlignment="Stretch"
                     Background="#FF151515"
+                    Text="INF"
           />
           <Button Name="btnClearINFFilePrefix"
                   Click="OnClearINFFilePrefix"
@@ -170,7 +174,7 @@
         />
         <Button Name="btnGenerate"
                 Click="OnGenerate"
-                IsEnabled="False"
+                IsEnabled="True"
                 Content="Generate"
                 HorizontalContentAlignment="Center"
                 Margin="10 0 0 0"
