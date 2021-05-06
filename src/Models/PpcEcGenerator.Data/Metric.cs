@@ -7,7 +7,7 @@ namespace PpcEcGenerator.Data
     /// <summary>
     ///     Represents a code metric.
     /// </summary>
-    public abstract class Metric
+    public class Metric
     {
         //---------------------------------------------------------------------
         //		Methods
@@ -18,7 +18,7 @@ namespace PpcEcGenerator.Data
         //---------------------------------------------------------------------
         //		Constructor
         //---------------------------------------------------------------------
-        protected Metric(string filePath)
+        public Metric(string filePath)
         {
             if (string.IsNullOrEmpty(filePath))
                 throw new ArgumentException("File metrics cannot be empty");
@@ -39,44 +39,93 @@ namespace PpcEcGenerator.Data
                 if ((req.Length == 0) || !req.Contains("["))
                     continue;
 
-                requirements.Add(new Requirement(ExtractPathFrom(req)));
+                requirements.Add(new Requirement(GeneratePathFrom(req)));
             }
         }
 
-        private string ExtractPathFrom(string str)
+        private List<int> GeneratePathFrom(string str)
+        {
+            List<int> path = new List<int>();
+
+            foreach (string lineNumber in ExtractPathFrom(str))
+            {
+                path.Add(int.Parse(lineNumber));
+            }
+
+            return path;
+        }
+
+        private string[] ExtractPathFrom(string str)
         {
             // StartPoint is used to remove all char before the "["
             int startPoint = str.IndexOf("[");
             string path = str.Substring(startPoint);
             
-            return path.Trim(new char[] { ' ', '[', ']', '\n' });
+            return path
+                .Trim(new char[] { ' ', '[', ']', '\n' })
+                .Replace(" ", "")
+                .Split(",");
         }
 
-        public void CountReqCovered(List<Test> listTestPath)
+        public double CalculateCoverage(List<TestPath> listTestPath)
+        {
+            ParseTestPaths(listTestPath);
+
+            return CalculateCoverage();
+        }
+
+        private void ParseTestPaths(List<TestPath> listTestPath)
         {
             if (listTestPath == null)
                 throw new ArgumentException("Test path list cannot be null");
 
             foreach (Requirement requirement in requirements)
             {
-                foreach (Test testPath in listTestPath)
-                {
-                    if (!testPath.HasPath(requirement.Path) || !requirement.Feasible)
-                        continue;
+                bool covered = false;
+                int i = 0;
 
-                    ParseTestPath(requirement, testPath);
+                while (!covered && i < listTestPath.Count)
+                {
+                    if (listTestPath[0].HasPath(requirement.Path) && requirement.Feasible)
+                    {
+                        covered = true;
+                        SetRequirementAsCovered(requirement, listTestPath[0]);
+                    }
+
+                    i++;
                 }
             }
         }
 
-        protected abstract void ParseTestPath(Requirement requirement, Test test);
+        protected void SetRequirementAsCovered(Requirement requirement, TestPath test)
+        {
+            if (requirement.Covered == false)
+            {
+                requirement.Covered = true;
+            }
 
-        public void ParseInfeasiblePath(List<string> listInfeasiblePaths)
+            requirement.AddTestPath(test.Path);
+        }
+
+        private double CalculateCoverage()
+        {
+            int totalCovered = 0;
+
+            foreach (Requirement requirement in requirements)
+            {
+                if (requirement.Covered)
+                    totalCovered++;
+            }
+
+            return totalCovered / (double) requirements.Count;
+        }
+
+        public void ParseInfeasiblePath(List<List<int>> listInfeasiblePaths)
         {
             if (listInfeasiblePaths == null)
                 throw new ArgumentException("Infeasible paths list cannot be null");
 
-            foreach (string infeasiblePath in listInfeasiblePaths)
+            foreach (List<int> infeasiblePath in listInfeasiblePaths)
             {
                 foreach (Requirement requirement in requirements)
                 {

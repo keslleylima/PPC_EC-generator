@@ -24,8 +24,8 @@ namespace PpcEcGenerator.Parse
         private readonly IDictionary<string, List<Coverage>> coverageData;
 
         private List<string> metricsDirectories;
-        private List<Test> listTestPath;
-        private List<string> listInfeasiblePaths;
+        private List<TestPath> listTestPath;
+        private List<List<int>> listInfeasiblePaths;
         private Coverage coverage;
         private List<IClassObserver> observers;
         private ProcessingProgress progress;
@@ -87,14 +87,14 @@ namespace PpcEcGenerator.Parse
             if (finder == null)
                 throw new ArgumentException("Coverage file finder cannot be null");
 
-            listInfeasiblePaths = new List<string>();
+            listInfeasiblePaths = new List<List<int>>();
 
             foreach (string methodPath in metricsDirectories)
             {
+                listTestPath = new List<TestPath>();
+                
                 progress.Forward();
                 NotifyAll();
-
-                listTestPath = new List<Test>();
 
                 finder.FindMetricsFilesAt(methodPath);
 
@@ -112,15 +112,15 @@ namespace PpcEcGenerator.Parse
             foreach (string testPathFile in finder.TestPathFiles)
             {
                 string[] testPathLines = File.ReadAllLines(testPathFile);
-                PPC ppc = new PPC(finder.PrimePathCoverageFile);
-                EC ec = new EC(finder.EdgeCoverageFile);
+                Metric ppc = new Metric(finder.PrimePathCoverageFile);
+                Metric ec = new Metric(finder.EdgeCoverageFile);
 
                 ParseInfeasiblePaths(finder.InfeasiblePathFile, ppc, ec);
                 ParseTestPathLines(testPathLines);
                 SortListByPathLength(listTestPath);
                 CalculateCoverage(
                     testPathLines.First(),
-                    PathToSignature.TestPathToSignature(testPathFile), 
+                    PathToSignature.TestPathToSignature(finder.TestPathFiles[0]), 
                     ppc, 
                     ec
                 );
@@ -133,7 +133,7 @@ namespace PpcEcGenerator.Parse
             foreach (string line in fileTestPath.Distinct().ToArray().Skip(1))
             {
                 if (ContainsPath(line))
-                    listTestPath.Add(new Test(ExtractCodePathFrom(line)));
+                    listTestPath.Add(new TestPath(GeneratePathFrom(line)));
             }
         }
 
@@ -144,16 +144,32 @@ namespace PpcEcGenerator.Parse
             return pathRegex.IsMatch(line);
         }
 
-        private string ExtractCodePathFrom(string line)
+        private List<int> GeneratePathFrom(string str)
         {
-            return line.Trim(new Char[] { ' ', '[', ']', '\n' });
+            List<int> path = new List<int>();
+
+            foreach (string lineNumber in ExtractPathFrom(str))
+            {
+                path.Add(int.Parse(lineNumber));
+            }
+
+            return path;
         }
 
-        private void CalculateCoverage(string testMethod, string coveredMethod, PPC ppc, EC ec)
+        private string[] ExtractPathFrom(string str)
         {
-            ppc.CountReqCovered(listTestPath);
-            ec.CountReqCovered(listTestPath);
+            // StartPoint is used to remove all char before the "["
+            int startPoint = str.IndexOf("[");
+            string path = str.Substring(startPoint);
 
+            return path
+                .Trim(new char[] { ' ', '[', ']', '\n' })
+                .Replace(" ", "")
+                .Split(",");
+        }
+
+        private void CalculateCoverage(string testMethod, string coveredMethod, Metric ppc, Metric ec)
+        {
             coverage = new Coverage(
                 testMethod,
                 coveredMethod,
@@ -187,7 +203,7 @@ namespace PpcEcGenerator.Parse
                     || (finder.TestPathFiles.Count == 0);
         }
 
-        private void ParseInfeasiblePaths(string infPathFile, PPC ppc, EC ec)
+        private void ParseInfeasiblePaths(string infPathFile, Metric ppc, Metric ec)
         {
             if (string.IsNullOrEmpty(infPathFile))
                 return;
@@ -195,14 +211,14 @@ namespace PpcEcGenerator.Parse
             foreach (string line in File.ReadAllLines(infPathFile))
             {
                 if (ContainsPath(line))
-                    listInfeasiblePaths.Add(ExtractCodePathFrom(line));
+                    listInfeasiblePaths.Add(GeneratePathFrom(line));
             }
 
             ppc.ParseInfeasiblePath(listInfeasiblePaths);
             ec.ParseInfeasiblePath(listInfeasiblePaths);
         }
 
-        private static void SortListByPathLength(List<Test> listTestPath)
+        private static void SortListByPathLength(List<TestPath> listTestPath)
         {
             for (int i = 1; i < listTestPath.Count; i++)
             {
@@ -210,7 +226,7 @@ namespace PpcEcGenerator.Parse
                 {
                     if (listTestPath[i].PathLength > listTestPath[j].PathLength)
                     {
-                        Test test = listTestPath[i];
+                        TestPath test = listTestPath[i];
                         listTestPath[i] = listTestPath[j];
                         listTestPath[j] = test;
                     }

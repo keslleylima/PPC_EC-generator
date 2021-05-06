@@ -3,25 +3,17 @@
 namespace PpcEcGenerator.Data
 {
     /// <summary>
-    ///     Represents a test requirement.
+    ///     Manages metrics information for a test.
     /// </summary>
-    public class Requirement
+    public class TestPath
     {
-        //---------------------------------------------------------------------
-        //		Attributes
-        //---------------------------------------------------------------------
-        private List<List<int>> testPaths;
-
-
         //---------------------------------------------------------------------
         //		Constructor
         //---------------------------------------------------------------------
-        public Requirement(List<int> path)
+        public TestPath(List<int> path)
         {
-            testPaths = new List<List<int>>();
             Path = path;
-            Covered = false;
-            Feasible = true;
+            PathLength = path.Count;
         }
 
 
@@ -29,8 +21,7 @@ namespace PpcEcGenerator.Data
         //		Properties
         //---------------------------------------------------------------------
         public List<int> Path { get; private set; }
-        public bool Covered { get; set; }
-        public bool Feasible { get; set; }
+        public int PathLength { get; private set; }
 
 
         //---------------------------------------------------------------------
@@ -47,18 +38,11 @@ namespace PpcEcGenerator.Data
             return true;
         }
 
-        public void AddTestPath(List<int> testPath)
-        {
-            testPaths.Add(testPath);
-        }
-
         public override string ToString()
         {
-            return $"Requirement ["
+            return $"TestPath ["
                 + $"Path: {Path}; "
-                + $"Covered: {Covered}; "
-                + $"Feasible: {Feasible}; "
-                + $"testPaths: {testPaths}"
+                + $"PathLength: {PathLength}; "
             + $"]";
         }
     }

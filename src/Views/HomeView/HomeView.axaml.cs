@@ -203,8 +203,10 @@ namespace PpcEcGenerator.Views
             btnGenerate.IsEnabled = false;
         }
 
-        private void OnGenerate(object sender, RoutedEventArgs e)
+        private async void OnGenerate(object sender, RoutedEventArgs e)
         {
+            string output = await homeController.AskUserForSavePath();
+
             try
             {
                 homeController.OnGenerate(
@@ -212,7 +214,8 @@ namespace PpcEcGenerator.Views
                     inTrPpcFilePrefix.Text,
                     inTrEcFilePrefix.Text,
                     inTpFilePrefix.Text,
-                    inINFFilePrefix.Text
+                    inINFFilePrefix.Text,
+                    output
                 );
             }
             catch (Exception ex)

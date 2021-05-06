@@ -174,7 +174,7 @@
         />
         <Button Name="btnGenerate"
                 Click="OnGenerate"
-                IsEnabled="True"
+                IsEnabled="False"
                 Content="Generate"
                 HorizontalContentAlignment="Center"
                 Margin="10 0 0 0"

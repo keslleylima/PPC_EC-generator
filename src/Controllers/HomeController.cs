@@ -1,5 +1,7 @@
 ﻿using Avalonia.Controls;
+using Avalonia.Threading;
 using PpcEcGenerator.Views;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace PpcEcGenerator.Controllers
@@ -40,12 +42,10 @@ namespace PpcEcGenerator.Controllers
                     : "";
         }
 
-        public async void OnGenerate(string metricsRootPath, string trPpcFilePrefix,
+        public void OnGenerate(string metricsRootPath, string trPpcFilePrefix,
                                string trEcFilePrefix, string tpFilePrefix, 
-                               string infFilePrefix)
+                               string infFilePrefix, string outputPath)
         {
-            string outputPath = await AskUserForSavePath();
-
             PpcEcGenerator generator = new PpcEcGenerator.Builder()
                 .ProjectPath(metricsRootPath)
                 .OutputPath(outputPath)
@@ -55,13 +55,16 @@ namespace PpcEcGenerator.Controllers
                 .InfeasiblePathPrefix(infFilePrefix)
                 .WithObserver(homeView)
                 .Build();
+            
+            _ = Dispatcher.UIThread.InvokeAsync(() =>
+              {
+                  string output = generator.GenerateCoverage();
 
-            string output = generator.GenerateCoverage();
-
-            window.NavigateToEndView(output);
+                  window.NavigateToEndView(output);
+              });
         }
 
-        private async Task<string> AskUserForSavePath()
+        public async Task<string> AskUserForSavePath()
         {
             SaveFileDialog dialog = new SaveFileDialog();
 
