@@ -78,7 +78,7 @@ namespace PpcEcGenerator.Parse
         [Fact]
         public void TestParserWithNullFinder()
         {
-            MetricsParser parser = new MetricsParser("foo/bar");
+            MetricsParser parser = new MetricsParser(projectsFolder);
             
             Assert.Throws<ArgumentException>(() =>
             {
