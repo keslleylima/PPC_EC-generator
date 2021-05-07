@@ -22,6 +22,12 @@ This source code is application that is used to generate the Prime Path Coverage
 #### Home
 ![home-img](https://raw.githubusercontent.com/williamniemiec/PPC_EC-generator/master/docs/img/screens/home.png?raw=true)
 
+## 🚩 Changelog
+Details about each version are documented in the [releases section](https://github.com/williamniemiec/PPC_EC-generator/releases).
+
+## 🤝 Contribute!
+See the documentation on how you can contribute to the project [here](https://github.com/williamniemiec/PPC_EC-generator/blob/master/CONTRIBUTING.md).
+
 ## 📁 Files
 ### /
 |        Name 	|Type|Description|

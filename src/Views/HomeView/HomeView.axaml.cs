@@ -2,23 +2,26 @@ using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using PpcEcGenerator.Controllers;
+using PpcEcGenerator.Data;
 using PpcEcGenerator.Style.Color;
+using PpcEcGenerator.Util;
 using System;
 
 namespace PpcEcGenerator.Views
 {
-    public class HomeView : UserControl
+    public class HomeView : UserControl, IClassObserver
     {
         //---------------------------------------------------------------------
         //		Attributes
         //---------------------------------------------------------------------
-        private TextBox inMetricsRootPath;
-        private TextBox inTrPpcFilePrefix;
-        private TextBox inTrEcFilePrefix;
-        private TextBox inTpFilePrefix;
-        private TextBox inINFFilePrefix;
-        private Button btnGenerate;
-        private HomeController homeController;
+        private TextBox inMetricsRootPath = default!;
+        private TextBox inTrPpcFilePrefix = default!;
+        private TextBox inTrEcFilePrefix = default!;
+        private TextBox inTpFilePrefix = default!;
+        private TextBox inINFFilePrefix = default!;
+        private Button btnGenerate = default!;
+        private readonly HomeController homeController;
+        private ProgressBar progressBar = default!;
 
 
         //---------------------------------------------------------------------
@@ -26,6 +29,8 @@ namespace PpcEcGenerator.Views
         //---------------------------------------------------------------------
         public HomeView()
         {
+            homeController = default!;
+
             InitializeComponent();
             BuildProgressBar();
             BuildChooseMetricsRootPathButton();
@@ -40,17 +45,23 @@ namespace PpcEcGenerator.Views
 
         public HomeView(MainWindow window) : this()
         {
-            homeController = new HomeController(window);
+            homeController = new HomeController(window, this);
         }
 
 
         //---------------------------------------------------------------------
         //		Methods
         //---------------------------------------------------------------------
+        public void Update(IClassObservable observable, object data)
+        {
+            ProcessingProgress progress = (ProcessingProgress) data;
+
+            progressBar.Value = (progress.Current + 1) % 101;
+        }
+
         private void BuildProgressBar()
         {
-            ProgressBar progressBar = this.FindControl<ProgressBar>("progressBar");
-
+            progressBar = this.FindControl<ProgressBar>("progressBar");
             progressBar.Background = ColorBrushFactory.Theme();
             progressBar.Foreground = ColorBrushFactory.ThemeAccent();
         }
@@ -194,24 +205,35 @@ namespace PpcEcGenerator.Views
             btnGenerate.IsEnabled = false;
         }
 
-        private void OnGenerate(object sender, RoutedEventArgs e)
+        private async void OnGenerate(object sender, RoutedEventArgs e)
         {
-            try
-            {
-                homeController.OnGenerate(
-                    inMetricsRootPath.Text,
-                    inTrPpcFilePrefix.Text,
-                    inTrEcFilePrefix.Text,
-                    inTpFilePrefix.Text,
-                    inINFFilePrefix.Text
-                );
-            }
-            catch (Exception ex)
-            {
-                ErrorDialog dialog = new ErrorDialog(ex.ToString());
+            string output = await homeController.AskUserForSavePath();
 
-                dialog.Show();
-            }
+            homeController.OnGenerate(
+                inMetricsRootPath.Text,
+                inTrPpcFilePrefix.Text,
+                inTrEcFilePrefix.Text,
+                inTpFilePrefix.Text,
+                inINFFilePrefix.Text,
+                output
+            );
+        }
+
+        public void EnableGenerateButton()
+        {
+            btnGenerate.IsEnabled = true;
+        }
+
+        public void DisableGenerateButton()
+        {
+            btnGenerate.IsEnabled = true;
+        }
+
+        public void DisplayErrorDialog(string msg)
+        {
+            ErrorDialog dialog = new ErrorDialog(msg);
+
+            dialog.Show();
         }
     }
 }

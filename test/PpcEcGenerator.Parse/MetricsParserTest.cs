@@ -50,7 +50,7 @@ namespace PpcEcGenerator.Parse
             DoParsing();
 
             WithSignature("org.apache.commons.math4.analysis.solvers.FieldBracketingNthOrderBrentSolverTest.testConvergenceOnFunctionAccuracy()");
-            ExpectCoverage(7.0/25.0, 18.0/43.0);
+            ExpectCoverage(10.0/25.0, 18.0/43.0);
             WithSignature("org.apache.commons.math4.dfp.DfpTest.testLog10()");
             ExpectCoverage(1, 1);
 
@@ -78,7 +78,7 @@ namespace PpcEcGenerator.Parse
         [Fact]
         public void TestParserWithNullFinder()
         {
-            MetricsParser parser = new MetricsParser("foo/bar");
+            MetricsParser parser = new MetricsParser(projectsFolder);
             
             Assert.Throws<ArgumentException>(() =>
             {
@@ -112,7 +112,7 @@ namespace PpcEcGenerator.Parse
 
         private void DoParsing()
         {
-            MetricsParser parser = new MetricsParser(projectsFolder + projectName + Path.DirectorySeparatorChar);
+            MetricsParser parser = new MetricsParser(projectsFolder + projectName + Path.DirectorySeparatorChar + "results");
 
             CoverageFileFinder finder = new CoverageFileFinder.Builder()
                 .PrimePathCoveragePrefix(ppcPrefix)

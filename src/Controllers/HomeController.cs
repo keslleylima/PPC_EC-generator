@@ -1,5 +1,8 @@
 ﻿using Avalonia.Controls;
+using Avalonia.Threading;
 using PpcEcGenerator.Views;
+using System;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace PpcEcGenerator.Controllers
@@ -13,14 +16,16 @@ namespace PpcEcGenerator.Controllers
         //		Attributes
         //---------------------------------------------------------------------
         private MainWindow window;
+        private HomeView homeView;
 
 
         //---------------------------------------------------------------------
         //		Constructors
         //---------------------------------------------------------------------
-        public HomeController(MainWindow window)
+        public HomeController(MainWindow window, HomeView homeView)
         {
             this.window = window;
+            this.homeView = homeView;
         }
 
 
@@ -38,12 +43,10 @@ namespace PpcEcGenerator.Controllers
                     : "";
         }
 
-        public async void OnGenerate(string metricsRootPath, string trPpcFilePrefix,
+        public void OnGenerate(string metricsRootPath, string trPpcFilePrefix,
                                string trEcFilePrefix, string tpFilePrefix, 
-                               string infFilePrefix)
+                               string infFilePrefix, string outputPath)
         {
-            string outputPath = await AskUserForSavePath();
-
             PpcEcGenerator generator = new PpcEcGenerator.Builder()
                 .ProjectPath(metricsRootPath)
                 .OutputPath(outputPath)
@@ -51,12 +54,28 @@ namespace PpcEcGenerator.Controllers
                 .EdgeCoveragePrefix(trEcFilePrefix)
                 .TestPathPrefix(tpFilePrefix)
                 .InfeasiblePathPrefix(infFilePrefix)
+                .WithObserver(homeView)
                 .Build();
-
-            window.NavigateToEndView(generator.GenerateCoverage());
+            
+            _ = Dispatcher.UIThread.InvokeAsync(() =>
+              {
+                  try
+                  {
+                      homeView.DisableGenerateButton();
+                      
+                      string output = generator.GenerateCoverage();
+                      
+                      window.NavigateToEndView(output);
+                  }
+                  catch (Exception ex)
+                  {
+                      homeView.DisplayErrorDialog(ex.ToString());
+                      homeView.EnableGenerateButton();
+                  }
+              });
         }
 
-        private async Task<string> AskUserForSavePath()
+        public async Task<string> AskUserForSavePath()
         {
             SaveFileDialog dialog = new SaveFileDialog();
 

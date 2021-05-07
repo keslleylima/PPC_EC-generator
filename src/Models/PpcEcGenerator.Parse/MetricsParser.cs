@@ -5,13 +5,14 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using PpcEcGenerator.Util;
+using System.Text.RegularExpressions;
 
 namespace PpcEcGenerator.Parse
 {
     /// <summary>
     ///     Responsible for parsing metrics files.
     /// </summary>
-    public class MetricsParser
+    public class MetricsParser : IClassObservable
     {
         //---------------------------------------------------------------------
         //		Attributes
@@ -22,10 +23,12 @@ namespace PpcEcGenerator.Parse
         /// </summary>
         private readonly IDictionary<string, List<Coverage>> coverageData;
 
-        private readonly string projectPath;
-        private List<Test> listTestPath;
-        private List<string> listInfeasiblePaths;
+        private readonly List<string> metricsDirectories;
+        private List<TestPath> listTestPath;
+        private List<List<int>> listInfeasiblePaths;
         private Coverage coverage;
+        private readonly List<IClassObserver> observers;
+        private readonly ProcessingProgress progress;
 
 
         //---------------------------------------------------------------------
@@ -36,24 +39,65 @@ namespace PpcEcGenerator.Parse
             if (string.IsNullOrEmpty(projectPath))
                 throw new ArgumentException("Project path cannot be empty");
 
-            this.projectPath = projectPath;
             coverageData = new Dictionary<string, List<Coverage>>();
+            observers = new List<IClassObserver>();
+            metricsDirectories = new List<string>();
+            
+            FindDirectories(projectPath);
+            progress = new ProcessingProgress(0, metricsDirectories.Count, 0);
+            listTestPath = default!;
+            listInfeasiblePaths = default!;
+            coverage = default!;
         }
 
 
         //---------------------------------------------------------------------
         //		Methods
         //---------------------------------------------------------------------
+        private void FindDirectories(string path)
+        {
+            foreach (string file in Directory.GetFiles(path, "*.txt", SearchOption.AllDirectories))
+            {
+                string directory = Directory.GetParent(file)?.FullName ?? "";
+
+                if ((directory != "") && !metricsDirectories.Contains(directory))
+                {
+                    metricsDirectories.Add(directory);
+                }
+            }
+        }
+
+        public void Attach(IClassObserver observer)
+        {
+            observers.Add(observer);
+        }
+
+        public void Detach(IClassObserver observer)
+        {
+            observers.Remove(observer);
+        }
+
+        public void NotifyAll()
+        {
+            foreach (IClassObserver observer in observers)
+            {
+                observer.Update(this, progress);
+            }
+        }
+
         public IDictionary<string, List<Coverage>> ParseMetrics(CoverageFileFinder finder)
         {
             if (finder == null)
                 throw new ArgumentException("Coverage file finder cannot be null");
 
-            listInfeasiblePaths = new List<string>();
+            listInfeasiblePaths = new List<List<int>>();
 
-            foreach (string methodPath in Directory.GetDirectories(projectPath))
+            foreach (string methodPath in metricsDirectories)
             {
-                listTestPath = new List<Test>();
+                listTestPath = new List<TestPath>();
+                
+                progress.Forward();
+                NotifyAll();
 
                 finder.FindMetricsFilesAt(methodPath);
 
@@ -71,15 +115,15 @@ namespace PpcEcGenerator.Parse
             foreach (string testPathFile in finder.TestPathFiles)
             {
                 string[] testPathLines = File.ReadAllLines(testPathFile);
-                PPC ppc = new PPC(finder.PrimePathCoverageFile);
-                EC ec = new EC(finder.EdgeCoverageFile);
+                Metric ppc = new Metric(finder.PrimePathCoverageFile);
+                Metric ec = new Metric(finder.EdgeCoverageFile);
 
                 ParseInfeasiblePaths(finder.InfeasiblePathFile, ppc, ec);
                 ParseTestPathLines(testPathLines);
                 SortListByPathLength(listTestPath);
                 CalculateCoverage(
                     testPathLines.First(),
-                    PathToSignature.TestPathToSignature(testPathFile), 
+                    PathToSignature.TestPathToSignature(finder.TestPathFiles[0]), 
                     ppc, 
                     ec
                 );
@@ -91,20 +135,44 @@ namespace PpcEcGenerator.Parse
         {
             foreach (string line in fileTestPath.Distinct().ToArray().Skip(1))
             {
-                listTestPath.Add(new Test(ExtractCodePathFrom(line)));
+                if (ContainsPath(line))
+                    listTestPath.Add(new TestPath(GeneratePathFrom(line)));
             }
         }
 
-        private string ExtractCodePathFrom(string line)
+        private bool ContainsPath(string line)
         {
-            return line.Trim(new Char[] { ' ', '[', ']', '\n' });
+            Regex pathRegex = new Regex(".*\\[.+\\].*");
+            
+            return pathRegex.IsMatch(line);
         }
 
-        private void CalculateCoverage(string testMethod, string coveredMethod, PPC ppc, EC ec)
+        private List<int> GeneratePathFrom(string str)
         {
-            ppc.CountReqCovered(listTestPath);
-            ec.CountReqCovered(listTestPath);
+            List<int> path = new List<int>();
 
+            foreach (string lineNumber in ExtractPathFrom(str))
+            {
+                path.Add(int.Parse(lineNumber));
+            }
+
+            return path;
+        }
+
+        private string[] ExtractPathFrom(string str)
+        {
+            // StartPoint is used to remove all char before the "["
+            int startPoint = str.IndexOf("[");
+            string path = str.Substring(startPoint);
+
+            return path
+                .Trim(new char[] { ' ', '[', ']', '\n' })
+                .Replace(" ", "")
+                .Split(",");
+        }
+
+        private void CalculateCoverage(string testMethod, string coveredMethod, Metric ppc, Metric ec)
+        {
             coverage = new Coverage(
                 testMethod,
                 coveredMethod,
@@ -117,9 +185,9 @@ namespace PpcEcGenerator.Parse
         {
             if (coverageData.ContainsKey(methodId))
             {
-                coverageData.TryGetValue(methodId, out List<Coverage> coverageList);
+                coverageData.TryGetValue(methodId, out var coverageList);
 
-                coverageList.Add(coverage);
+                coverageList?.Add(coverage);
             }
             else
             {
@@ -138,21 +206,22 @@ namespace PpcEcGenerator.Parse
                     || (finder.TestPathFiles.Count == 0);
         }
 
-        private void ParseInfeasiblePaths(string infPathFile, PPC ppc, EC ec)
+        private void ParseInfeasiblePaths(string infPathFile, Metric ppc, Metric ec)
         {
             if (string.IsNullOrEmpty(infPathFile))
                 return;
 
             foreach (string line in File.ReadAllLines(infPathFile))
             {
-                listInfeasiblePaths.Add(ExtractCodePathFrom(line));
+                if (ContainsPath(line))
+                    listInfeasiblePaths.Add(GeneratePathFrom(line));
             }
 
             ppc.ParseInfeasiblePath(listInfeasiblePaths);
             ec.ParseInfeasiblePath(listInfeasiblePaths);
         }
 
-        private static void SortListByPathLength(List<Test> listTestPath)
+        private static void SortListByPathLength(List<TestPath> listTestPath)
         {
             for (int i = 1; i < listTestPath.Count; i++)
             {
@@ -160,7 +229,7 @@ namespace PpcEcGenerator.Parse
                 {
                     if (listTestPath[i].PathLength > listTestPath[j].PathLength)
                     {
-                        Test test = listTestPath[i];
+                        TestPath test = listTestPath[i];
                         listTestPath[i] = listTestPath[j];
                         listTestPath[j] = test;
                     }

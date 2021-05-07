@@ -10,15 +10,15 @@ namespace PpcEcGenerator.Data
         //---------------------------------------------------------------------
         //		Attributes
         //---------------------------------------------------------------------
-        private List<string> testPaths;
+        private List<List<int>> testPaths;
 
 
         //---------------------------------------------------------------------
         //		Constructor
         //---------------------------------------------------------------------
-        public Requirement(string path)
+        public Requirement(List<int> path)
         {
-            testPaths = new List<string>();
+            testPaths = new List<List<int>>();
             Path = path;
             Covered = false;
             Feasible = true;
@@ -28,7 +28,7 @@ namespace PpcEcGenerator.Data
         //---------------------------------------------------------------------
         //		Properties
         //---------------------------------------------------------------------
-        public string Path { get; private set; }
+        public List<int> Path { get; private set; }
         public bool Covered { get; set; }
         public bool Feasible { get; set; }
 
@@ -36,12 +36,18 @@ namespace PpcEcGenerator.Data
         //---------------------------------------------------------------------
         //		Methods
         //---------------------------------------------------------------------
-        public bool HasPath(string path)
+        public bool HasPath(List<int> path)
         {
-            return Path.Contains(path);
+            foreach (int lineNumber in path)
+            {
+                if (!path.Contains(lineNumber))
+                    return false;
+            }
+
+            return true;
         }
 
-        public void AddTestPath(string testPath)
+        public void AddTestPath(List<int> testPath)
         {
             testPaths.Add(testPath);
         }
