@@ -22,6 +22,9 @@ namespace PpcEcGenerator.Util
         //---------------------------------------------------------------------
         public static string TestPathToSignature(string path)
         {
+            if (!path.Contains("results"))
+                throw new ArgumentException("Metrics must be inside a folder named 'results'");
+
             string directoryPath = Directory.GetParent(path)?.FullName ?? "";
             List<string> invertedSignature = TPPathToInvertedSignature(directoryPath);
             

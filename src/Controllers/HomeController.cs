@@ -1,6 +1,7 @@
 ﻿using Avalonia.Controls;
 using Avalonia.Threading;
 using PpcEcGenerator.Views;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -58,9 +59,19 @@ namespace PpcEcGenerator.Controllers
             
             _ = Dispatcher.UIThread.InvokeAsync(() =>
               {
-                  string output = generator.GenerateCoverage();
-
-                  window.NavigateToEndView(output);
+                  try
+                  {
+                      homeView.DisableGenerateButton();
+                      
+                      string output = generator.GenerateCoverage();
+                      
+                      window.NavigateToEndView(output);
+                  }
+                  catch (Exception ex)
+                  {
+                      homeView.DisplayErrorDialog(ex.ToString());
+                      homeView.EnableGenerateButton();
+                  }
               });
         }
 

@@ -209,23 +209,31 @@ namespace PpcEcGenerator.Views
         {
             string output = await homeController.AskUserForSavePath();
 
-            try
-            {
-                homeController.OnGenerate(
-                    inMetricsRootPath.Text,
-                    inTrPpcFilePrefix.Text,
-                    inTrEcFilePrefix.Text,
-                    inTpFilePrefix.Text,
-                    inINFFilePrefix.Text,
-                    output
-                );
-            }
-            catch (Exception ex)
-            {
-                ErrorDialog dialog = new ErrorDialog(ex.ToString());
+            homeController.OnGenerate(
+                inMetricsRootPath.Text,
+                inTrPpcFilePrefix.Text,
+                inTrEcFilePrefix.Text,
+                inTpFilePrefix.Text,
+                inINFFilePrefix.Text,
+                output
+            );
+        }
 
-                dialog.Show();
-            }
+        public void EnableGenerateButton()
+        {
+            btnGenerate.IsEnabled = true;
+        }
+
+        public void DisableGenerateButton()
+        {
+            btnGenerate.IsEnabled = true;
+        }
+
+        public void DisplayErrorDialog(string msg)
+        {
+            ErrorDialog dialog = new ErrorDialog(msg);
+
+            dialog.Show();
         }
     }
 }

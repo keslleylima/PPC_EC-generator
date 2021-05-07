@@ -86,10 +86,10 @@ namespace PpcEcGenerator.Data
 
                 while (!covered && i < listTestPath.Count)
                 {
-                    if (listTestPath[0].HasPath(requirement.Path) && requirement.Feasible)
+                    if (listTestPath[i].HasPath(requirement.Path) && requirement.Feasible)
                     {
                         covered = true;
-                        SetRequirementAsCovered(requirement, listTestPath[0]);
+                        SetRequirementAsCovered(requirement, listTestPath[i]);
                     }
 
                     i++;

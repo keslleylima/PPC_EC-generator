@@ -136,7 +136,9 @@ namespace PpcEcGenerator.IO
                     EdgeCoverageFile = file;
                 else if (Path.GetFileName(file).Contains(tpPrefix))
                     TestPathFiles.Add(file);
-                else if (Path.GetFileName(file).Contains(infPrefix))
+
+                if (!string.IsNullOrEmpty(infPrefix) && 
+                        Path.GetFileName(file).Contains(infPrefix))
                     InfeasiblePathFile = file;
             }
         }
