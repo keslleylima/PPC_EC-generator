@@ -39,32 +39,19 @@ namespace PpcEcGenerator.Data
                 if ((req.Length == 0) || !req.Contains("["))
                     continue;
 
-                requirements.Add(new Requirement(GeneratePathFrom(req)));
+                requirements.Add(new Requirement(ExtractPathFrom(req)));
             }
         }
 
-        private List<int> GeneratePathFrom(string str)
-        {
-            List<int> path = new List<int>();
-
-            foreach (string lineNumber in ExtractPathFrom(str))
-            {
-                path.Add(int.Parse(lineNumber));
-            }
-
-            return path;
-        }
-
-        private string[] ExtractPathFrom(string str)
+        private string ExtractPathFrom(string str)
         {
             // StartPoint is used to remove all char before the "["
             int startPoint = str.IndexOf("[");
             string path = str.Substring(startPoint);
-            
+
             return path
                 .Trim(new char[] { ' ', '[', ']', '\n' })
-                .Replace(" ", "")
-                .Split(",");
+                .Replace(" ", "");
         }
 
         public double CalculateCoverage(List<TestPath> listTestPath)
@@ -120,12 +107,12 @@ namespace PpcEcGenerator.Data
             return totalCovered / (double) requirements.Count;
         }
 
-        public void ParseInfeasiblePath(List<List<int>> listInfeasiblePaths)
+        public void ParseInfeasiblePath(List<string> listInfeasiblePaths)
         {
             if (listInfeasiblePaths == null)
                 throw new ArgumentException("Infeasible paths list cannot be null");
 
-            foreach (List<int> infeasiblePath in listInfeasiblePaths)
+            foreach (string infeasiblePath in listInfeasiblePaths)
             {
                 foreach (Requirement requirement in requirements)
                 {

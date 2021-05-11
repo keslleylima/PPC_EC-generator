@@ -25,7 +25,7 @@ namespace PpcEcGenerator.Parse
 
         private readonly List<string> metricsDirectories;
         private List<TestPath> listTestPath;
-        private List<List<int>> listInfeasiblePaths;
+        private List<string> listInfeasiblePaths;
         private Coverage coverage;
         private readonly List<IClassObserver> observers;
         private readonly ProcessingProgress progress;
@@ -90,7 +90,7 @@ namespace PpcEcGenerator.Parse
             if (finder == null)
                 throw new ArgumentException("Coverage file finder cannot be null");
 
-            listInfeasiblePaths = new List<List<int>>();
+            listInfeasiblePaths = new List<string>();
 
             foreach (string methodPath in metricsDirectories)
             {
@@ -136,7 +136,7 @@ namespace PpcEcGenerator.Parse
             foreach (string line in fileTestPath.Distinct().ToArray().Skip(1))
             {
                 if (ContainsPath(line))
-                    listTestPath.Add(new TestPath(GeneratePathFrom(line)));
+                    listTestPath.Add(new TestPath(ExtractPathFrom(line)));
             }
         }
 
@@ -147,19 +147,7 @@ namespace PpcEcGenerator.Parse
             return pathRegex.IsMatch(line);
         }
 
-        private List<int> GeneratePathFrom(string str)
-        {
-            List<int> path = new List<int>();
-
-            foreach (string lineNumber in ExtractPathFrom(str))
-            {
-                path.Add(int.Parse(lineNumber));
-            }
-
-            return path;
-        }
-
-        private string[] ExtractPathFrom(string str)
+        private string ExtractPathFrom(string str)
         {
             // StartPoint is used to remove all char before the "["
             int startPoint = str.IndexOf("[");
@@ -167,8 +155,7 @@ namespace PpcEcGenerator.Parse
 
             return path
                 .Trim(new char[] { ' ', '[', ']', '\n' })
-                .Replace(" ", "")
-                .Split(",");
+                .Replace(" ", "");
         }
 
         private void CalculateCoverage(string testMethod, string coveredMethod, Metric ppc, Metric ec)
@@ -214,7 +201,7 @@ namespace PpcEcGenerator.Parse
             foreach (string line in File.ReadAllLines(infPathFile))
             {
                 if (ContainsPath(line))
-                    listInfeasiblePaths.Add(GeneratePathFrom(line));
+                    listInfeasiblePaths.Add(ExtractPathFrom(line));
             }
 
             ppc.ParseInfeasiblePath(listInfeasiblePaths);

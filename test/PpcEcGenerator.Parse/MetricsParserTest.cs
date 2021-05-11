@@ -50,7 +50,7 @@ namespace PpcEcGenerator.Parse
             DoParsing();
 
             WithSignature("org.apache.commons.math4.analysis.solvers.FieldBracketingNthOrderBrentSolverTest.testConvergenceOnFunctionAccuracy()");
-            ExpectCoverage(10.0/25.0, 18.0/43.0);
+            ExpectCoverage(7.0/25.0, 18.0/43.0);
             WithSignature("org.apache.commons.math4.dfp.DfpTest.testLog10()");
             ExpectCoverage(1, 1);
 
