@@ -10,32 +10,26 @@ namespace PpcEcGenerator.Data
         //---------------------------------------------------------------------
         //		Constructor
         //---------------------------------------------------------------------
-        public TestPath(List<int> path)
+        public TestPath(string path)
         {
             Path = path;
-            PathLength = path.Count;
+            PathLength = path.Split(",").Length;
         }
 
 
         //---------------------------------------------------------------------
         //		Properties
         //---------------------------------------------------------------------
-        public List<int> Path { get; private set; }
+        public string Path { get; private set; }
         public int PathLength { get; private set; }
 
 
         //---------------------------------------------------------------------
         //		Methods
         //---------------------------------------------------------------------
-        public bool HasPath(List<int> path)
+        public bool HasPath(string path)
         {
-            foreach (int lineNumber in path)
-            {
-                if (!Path.Contains(lineNumber))
-                    return false;
-            }
-
-            return true;
+            return Path.Contains(path.Trim());
         }
 
         public override string ToString()
