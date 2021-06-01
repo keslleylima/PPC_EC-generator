@@ -10,8 +10,8 @@
         {
             TestMethod = testMethod;
             CoveredMethod = coveredMethod;
-            EdgeCoverage = ppcCoverage;
-            PrimePathCoverage = ecCoverage;
+            PrimePathCoverage = ppcCoverage;
+            EdgeCoverage = ecCoverage;
         }
 
 
